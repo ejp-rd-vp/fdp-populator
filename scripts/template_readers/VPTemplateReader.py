@@ -36,7 +36,14 @@ class VPTemplateReader:
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Organisation']
-        
+
+        # Check column names
+        for row in ws:
+            column_names = [cell.value for cell in row]
+            if column_names != ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']:
+                raise SystemError("Column names do not match in the organisatin sheet")
+            break
+
         # Loop over rows of excel sheet
         first_row = True
         organisations = {}
@@ -57,11 +64,12 @@ class VPTemplateReader:
                 else:
                     pages = []
 
-                location_title = row[3].value
-                location_description = row[4].value
+                logo = row[3].value
+                location = row[4].value
+                identifier = row[5].value
 
                 # Create organisation object and add to organisation dictionary
-                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location_title, location_description, pages)
+                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location, pages, logo, identifier)
                 organisations[organisation.TITLE] = organisation
 
         return organisations
