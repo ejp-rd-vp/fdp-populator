@@ -4,9 +4,27 @@ from resource_classes import VPOrganisation, VPBiobank, VPPatientregistry, VPDat
 
 class VPTemplateReader:
     """
-    NOTE: this class is based on the folling specification:
+    NOTE: this class is based on the following specification as of November 10 2023:
     <https://github.com/ejp-rd-vp/resource-metadata-schema/blob/master/template/EJPRD%20Resource%20Metadata%20template.xlsx>
     """
+    
+    def check_template_version(self):
+        """
+        This method checks whether the Excel template is the expected version
+
+        :return: nothing
+        """
+        wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
+        expected_sheets = ['Organisation', 'ContactPoint', 'Biobank', 
+                           'PatientRegistry', 'Guideline', 'Dataset', 
+                           'Distribution', 'DataService', 'Catalog']
+
+        sheet_exists = [sheet in wb.sheetnames for sheet in expected_sheets]
+        if False in sheet_exists:
+            raise SystemError("A sheet in the Excel template is missing. The sheet could be a different version.")
+        
+        print("Excel template contains expected sheets.")
+
     def get_organisations(self):
         """
         This method creates organisation objects by extracting content from the ejp vp input file.
