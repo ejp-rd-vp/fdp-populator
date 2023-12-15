@@ -37,20 +37,16 @@ class VPTemplateReader:
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Organisation']
 
-        # Check column names
-        for row in ws:
-            column_names = [cell.value for cell in row]
-            if column_names != ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']:
-                raise SystemError("Column names do not match in the organisatin sheet")
-            break
-
         # Loop over rows of excel sheet
         first_row = True
         organisations = {}
         for row in ws:
-            # Skip header
+            # Check header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']:
+                    raise SystemError("Column names do not match in the organisation sheet")
                 continue
 
             # Read row if it exists
