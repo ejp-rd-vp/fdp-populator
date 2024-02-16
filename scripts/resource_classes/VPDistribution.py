@@ -15,7 +15,7 @@ class VPDistribution(VPResource.VPResource):
     ISPARTOF = []
 
 
-    def __init__(self, parent_url, title, dataset_title, description, publisher_url, publisher_name, license, version, url, url_type, mediatype, ispartof, access, access_type):
+    def __init__(self,* , parent_url, title, dataset_title, description, publisher_url, publisher_name, license, version, url, url_type, mediatype, ispartof, access, access_type):
         """
 
         :param parent_url: Parent's catalog URL of a dataset. NOTE this url should exist in an FDP

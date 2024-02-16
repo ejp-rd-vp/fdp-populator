@@ -274,6 +274,11 @@ class VPTemplateReader:
 
         :return: Dict of distributions
         """
+        expected_column_names = ['License', 'Title', 'Description',
+            'Publisher', 'Version', 'AccessRights', 'ODRLPolicy',
+            'MediaType', 'IsPartOf', 'Type', 'AccessService']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Distribution']
@@ -285,32 +290,30 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the distribution sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                dataset_title = row[1].value
-                description = row[2].value
-                url = row[3].value
-                url_type = row[4].value
-                license = row[5].value
-                version = row[6].value
-                mediatype = row[7].value
-                publisher_name = row[8].value
-                if type(row[9].value) == str:
-                    ispartof = [item.strip() for item in row[9].value.split(";")]
-                else:
-                    ispartof = []
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create distribution object and add to distribution dictionary
-                distribution = VPDistribution.VPDistribution(None, title, dataset_title, description,
-                                                             None, publisher_name, license, version, url, url_type,
-                                                             mediatype, ispartof, access, access_type)
+                distribution = VPDistribution.VPDistribution(
+                    parent_url=Config.CATALOG_URL,
+                    title=self.getval("Title"),
+                    dataset_title=None,
+                    description=self.getval("Description"),
+                    publisher_url=self.getval("Publisher"),
+                    publisher_name=None,
+                    license=self.getval("License"),
+                    version=self.getval("Version"),
+                    url_type=self.getval("type"),
+                    mediatype=self.getval("MediaType"),
+                    ispartof=self.getval("IsPartOf"),
+                    access=self.getval("AccessRights"),
+                    access_type=None)
                 distributions[distribution.TITLE] = distribution
+                if Config.DEBUG: print(vars(distribution))
 
         return distributions
     
@@ -322,6 +325,7 @@ class VPTemplateReader:
 
         :return: Dict of dataservices
         """
+        # License	Type	Title	Description	PersonalData	Publisher	Theme	Language	ContactPoint	PopulationCoverage	AccessRights	ConformsTo	EndpointDescription	EndpointURL	LandingPage	VPConnection	ODRLPolicy	Logo	ServesDataset	Keyword	Identifier	Issued	Modified	Version	ConformsTo
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['DataService']
