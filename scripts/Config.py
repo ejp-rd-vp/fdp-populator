@@ -40,6 +40,13 @@ if os.path.isfile(CONFIG_FILE) :
     except:
         DRY_RUN = False
 
+    try:
+        DEBUG = config['debug']
+        if DEBUG not in (True, False):
+            DEBUG = False
+    except:
+        DEBUG = False
+
     CATALOG_URL = config['catalog_url']
 else:
     raise SystemExit("Config file does not exist. Provided input file path: " + CONFIG_FILE)

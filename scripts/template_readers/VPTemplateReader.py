@@ -33,6 +33,8 @@ class VPTemplateReader:
 
         :return: Dict of organisations
         """
+        # Prepare reading
+        print("Reading organisation sheet...")
         expected_column_names = ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
@@ -70,6 +72,8 @@ class VPTemplateReader:
                 # Create organisation object and add to organisation dictionary
                 organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location, pages, logo, identifier)
                 organisations[organisation.TITLE] = organisation
+                if Config.DEBUG:
+                    print(vars(organisation))
 
         return organisations
 
