@@ -14,7 +14,7 @@ class VPOrganisation():
     LANDING_PAGES = None
 
 
-    def __init__(self, parent_url, title, description, location_title, location_description, pages):
+    def __init__(self, parent_url, title, description, location, pages, logo, identifier):
         """
 
         :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP
@@ -27,9 +27,10 @@ class VPOrganisation():
         self.PARENT_URL = parent_url
         self.TITLE = title
         self.DESCRIPTION = description
-        self.LOCATION_TITLE = location_title
-        self.LOCATION_DESCRIPTION = location_description
+        self.LOCATION = location
         self.LANDING_PAGES = pages
+        self.LOGO = logo
+        self.IDENTIFIER = identifier
     
     def get_graph(self):
         """
