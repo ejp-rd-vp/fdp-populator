@@ -33,6 +33,9 @@ class VPTemplateReader:
 
         :return: Dict of organisations
         """
+        expected_column_names = ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Organisation']
@@ -45,24 +48,24 @@ class VPTemplateReader:
             if first_row:
                 first_row=False
                 column_names = [cell.value for cell in row]
-                if column_names != ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']:
+                if column_names != expected_column_names:
                     raise SystemError("Column names do not match in the organisation sheet")
                 continue
 
             # Read row if it exists
-            if row[0].value != None:
+            if row[keys["Title"]].value != None:
                 # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
+                title = row[keys["Title"]].value
+                description = row[keys["Description"]].value
 
-                if type(row[2].value) == str:
-                    pages = [page.strip() for page in row[2].value.split(";")]
+                if type(row[keys["LandingPage"]].value) == str:
+                    pages = [page.strip() for page in row[keys["LandingPage"]].value.split(";")]
                 else:
                     pages = []
 
-                logo = row[3].value
-                location = row[4].value
-                identifier = row[5].value
+                logo = row[keys["Logo"]].value
+                location = row[keys["Location"]].value
+                identifier = row[keys["Identifier"]].value
 
                 # Create organisation object and add to organisation dictionary
                 organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location, pages, logo, identifier)
