@@ -16,7 +16,7 @@ class VPPatientregistry():
     LANDING_PAGES = None
 
 
-    def __init__(self, parent_url, publisher_url, title, description, populationcoverage, themes, publisher_name, pages):
+    def __init__(self, *, parent_url, publisher_url, title, description, populationcoverage, themes, publisher_name, pages):
         """
 
         :param parent_url: Parent's catalog URL of a patient registry. NOTE this url should exist in an FDP

@@ -40,6 +40,7 @@ class VPTemplateReader:
 
         :return: nothing
         """
+        print("Checking sheet names...")
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         expected_sheets = ['Organisation', 'ContactPoint', 'Biobank', 
                            'PatientRegistry', 'Guideline', 'Dataset', 
@@ -137,8 +138,9 @@ class VPTemplateReader:
             if row[keys["Title"]].value != None:
                 # Create biobank object and add to biobank dictionary if it is a biobank
                 self.row = row
-                self.key = keys
-                biobank = VPBiobank.VPBiobank(parent_url=Config.CATALOG_URL,
+                self.keys = keys
+                biobank = VPBiobank.VPBiobank(
+                    parent_url=Config.CATALOG_URL,
                     publisher_url=None,
                     title=self.getval("Title"),
                     description=self.getval("Description"),
@@ -159,9 +161,19 @@ class VPTemplateReader:
 
         :return: Dict of patientregistries
         """
+        # Prepare reading
+        print("Reading patient registry sheet...")
+        expected_column_names = ['License', 'Title', 'Description',
+                'Theme', 'Publisher', 'ContactPoint', 'PersonalData',
+                'PopulationCoverage', 'Language', 'AccessRights',
+            	'LandingPage', 'Distribution', 'VPConnection',
+                'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                'Issued', 'Modified', 'Version', 'ConformsTo']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
-        ws = wb['BiobankPatientRegistry']
+        ws = wb['PatientRegistry']
         
         # Loop over rows of excel sheet
         first_row = True
@@ -170,44 +182,27 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the patient registry sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                populationcoverage = row[2].value
-
-                if type(row[3].value) == str:
-                    themes = [theme.strip() for theme in row[3].value.split(";")]
-                else:
-                    themes = []
-
-                conforms_to = row[4].value
-
-                publisher_name = row[5].value
-
-                if type(row[6].value) == str:
-                    pages = [page.strip() for page in row[6].value.split(";")]
-                else:
-                    pages = []
-
-                resource_type = row[7].value
-
-                if type(row[8].value) == str:
-                    keywords = [item.strip() for item in row[8].value.split(";")]
-                else:
-                    keywords = []
-
-                language = row[9].value
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create patient registry object and add to patientregistry dictionary if it is a patientregistry
-                if resource_type == "Patient registry":
-                    patientregistry = VPPatientregistry.VPPatientregistry(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher_name, pages)
-                    patientregistries[patientregistry.TITLE] = patientregistry
+                self.row = row
+                self.keys = keys
+                patientregistry = VPPatientregistry.VPPatientregistry(
+                    parent_url=Config.CATALOG_URL,
+                    publisher_url=None,
+                    title=self.getval("Title"),
+                    description=self.getval("description"),
+                    populationcoverage=self.getval("PopulationCoverage"),
+                    themes=self.getvals("Themes"),
+                    publisher_name=None,
+                    pages=self.getvals("pages"))
+                patientregistries[patientregistry.TITLE] = patientregistry
+                if Config.DEBUG: print(vars(patientregistry))
 
         return patientregistries
 
