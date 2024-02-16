@@ -241,40 +241,6 @@ class VPTemplateReader:
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-
-                if type(row[2].value) == str:
-                    themes = [theme.strip() for theme in row[2].value.split(";")]
-                else:
-                    themes = []
-
-                vpconnection = row[3].value
-                license = row[4].value
-                
-                if type(row[5].value) == str:
-                    related = [item.strip() for item in row[5].value.split(";")]
-                else:
-                    related = []
-
-                version = row[6].value
-                if version == None:
-                    version = "1"
-
-                if type(row[7].value) == str:
-                    keywords = [item.strip() for item in row[7].value.split(";")]
-                else:
-                    keywords = []
-
-                publisher_name = row[8].value
-                page = row[9].value
-
-                language = row[10].value
-                conforms_to = row[11].value
-                access = row[12].value
-                access_type = row[13].value
-
                 # Create dataset object and add to dataset dictionary
                 self.row = row
                 self.keys = keys
