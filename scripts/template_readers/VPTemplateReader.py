@@ -115,7 +115,7 @@ class VPTemplateReader:
                         'PopulationCoverage', 'Language', 'AccessRights',
                         'LandingPage', 'Distribution', 'VPConnection',
                         'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
-                        'Issued', 'Modified', 'Version', 'ConformsTo']
+                        'Issued', 'Modified', 'Version', 'ConformsTo', None]
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
         
         # Open organisation excel sheet
@@ -168,7 +168,7 @@ class VPTemplateReader:
                 'PopulationCoverage', 'Language', 'AccessRights',
             	'LandingPage', 'Distribution', 'VPConnection',
                 'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
-                'Issued', 'Modified', 'Version', 'ConformsTo']
+                'Issued', 'Modified', 'Version', 'ConformsTo', None]
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
         # Open organisation excel sheet
@@ -220,7 +220,7 @@ class VPTemplateReader:
                         'PopulationCoverage', 'Language', 'AccessRights',
                         'LandingPage', 'Distribution', 'VPConnection',
                         'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
-                        'Issued', 'Modified', 'Version', 'ConformsTo']
+                        'Issued', 'Modified', 'Version', 'ConformsTo', None]
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
         # Open organisation excel sheet
@@ -310,7 +310,8 @@ class VPTemplateReader:
                     publisher_name=None,
                     license=self.getval("License"),
                     version=self.getval("Version"),
-                    url_type=self.getval("type"),
+                    url=None,
+                    url_type=self.getval("Type"),
                     mediatype=self.getval("MediaType"),
                     ispartof=self.getval("IsPartOf"),
                     access=self.getval("AccessRights"),
@@ -336,7 +337,7 @@ class VPTemplateReader:
             'EndpointURL', 'LandingPage', 'VPConnection',
             'ODRLPolicy', 'Logo', 'ServesDataset', 'Keyword',
             'Identifier', 'Issued', 'Modified', 'Version', 
-            'ConformsTo']
+            'ConformsTo', None]
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
         # Open organisation excel sheet

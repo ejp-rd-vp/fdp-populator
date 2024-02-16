@@ -1,3 +1,4 @@
+import Config
 import chevron
 from rdflib import Graph
 
@@ -14,7 +15,7 @@ class VPOrganisation():
     LANDING_PAGES = None
 
 
-    def __init__(self,* , parent_url, title, description, location, pages, logo, identifier):
+    def __init__(self,* , parent_url, title, description, pages, logo, location, identifier):
         """
 
         :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP
@@ -27,9 +28,9 @@ class VPOrganisation():
         self.PARENT_URL = parent_url
         self.TITLE = title
         self.DESCRIPTION = description
-        self.LOCATION = location
         self.LANDING_PAGES = pages
         self.LOGO = logo
+        self.LOCATION = location
         self.IDENTIFIER = identifier
     
     def get_graph(self):
@@ -51,9 +52,13 @@ class VPOrganisation():
             body = chevron.render(f, {'parent_url': self.PARENT_URL,
                                       'title': self.TITLE,
                                       'description': self.DESCRIPTION,
-                                      'location_title': self.LOCATION_TITLE,
-                                      'location_description': self.LOCATION_DESCRIPTION,
-                                      'pages': page_str})
+                                      'pages': page_str,
+                                      'logo': self.LOGO,
+                                      'location': self.LOCATION,
+                                      'identifier': self.IDENTIFIER})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return graph
