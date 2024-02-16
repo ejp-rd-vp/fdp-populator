@@ -18,7 +18,7 @@ class VPDataset(VPResource.VPResource):
     CONTACT_POINT = None
 
 
-    def __init__(self, parent_url, title, description, keywords, themes, publisher_url, publisher_name,
+    def __init__(self,* , parent_url, title, description, keywords, themes, publisher_url, publisher_name,
                  language, license, page, contact_point, vpconnection, related, version, access, access_type):
         """
 

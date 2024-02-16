@@ -214,6 +214,15 @@ class VPTemplateReader:
 
         :return: Dict of datasets
         """
+        print("Reading dataset sheet...")
+        expected_column_names = ['License', 'Title', 'Description', 'Theme',
+                        'Publisher', 'ContactPoint', 'PersonalData',
+                        'PopulationCoverage', 'Language', 'AccessRights',
+                        'LandingPage', 'Distribution', 'VPConnection',
+                        'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                        'Issued', 'Modified', 'Version', 'ConformsTo']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Dataset']
@@ -225,6 +234,9 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the dataset sheet")
                 continue
 
             # Read row if it exists
@@ -264,10 +276,27 @@ class VPTemplateReader:
                 access_type = row[13].value
 
                 # Create dataset object and add to dataset dictionary
-                dataset = VPDataset.VPDataset(Config.CATALOG_URL, title, description, keywords, themes, 
-                                              None, publisher_name, "en", license, page, None, 
-                                              vpconnection, related, version, access, access_type)
+                self.row = row
+                self.keys = keys
+                dataset = VPDataset.VPDataset(
+                    parent_url=Config.CATALOG_URL,
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    keywords=self.getvals("Keyword"),
+                    themes=self.getvals("Theme"),
+                    publisher_url=self.getvals("Publisher"),
+                    publisher_name=None,
+                    language=self.getval("Language"),
+                    license=self.getval("License"),
+                    page=self.getval("LandingPage"),
+                    contact_point=self.getval("ContactPoint"),
+                    vpconnection=self.getval("VPConnection"),
+                    related=None,
+                    version=self.getval("Version"),
+                    access=self.getval("AccessRights"),
+                    access_type=None)
                 datasets[dataset.TITLE] = dataset
+                if Config.DEBUG: print(vars(dataset))
 
         return datasets
 
