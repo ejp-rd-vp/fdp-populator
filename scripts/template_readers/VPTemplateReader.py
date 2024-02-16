@@ -7,7 +7,7 @@ class VPTemplateReader:
     NOTE: this class is based on the following specification as of November 10 2023:
     <https://github.com/ejp-rd-vp/resource-metadata-schema/blob/master/template/EJPRD%20Resource%20Metadata%20template.xlsx>
     """
-    
+
     def check_template_version(self):
         """
         This method checks whether the Excel template is the expected version
@@ -85,9 +85,19 @@ class VPTemplateReader:
 
         :return: Dict of biobanks
         """
+        # Prepare reading
+        print("Reading biobank sheet...")
+        expected_column_names = ['License', 'Title', 'Description', 'Theme',
+                        'Publisher', 'ContactPoint', 'PersonalData',
+                        'PopulationCoverage', 'Language', 'AccessRights',
+                        'LandingPage', 'Distribution', 'VPConnection',
+                        'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                        'Issued', 'Modified', 'Version', 'ConformsTo']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+        
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
-        ws = wb['BiobankPatientRegistry']
+        ws = wb['Biobank']
         
         # Loop over rows of excel sheet
         first_row = True
@@ -96,44 +106,57 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                print(column_names)
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the biobank sheet")
                 continue
 
             # Read row if it exists
-            if row[0].value != None:
+            if row[keys("Title")].value != None:
                 # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                populationcoverage = row[2].value
+                license = row[keys["License"]].value
+                title = row[keys["Title"]].value
+                description = row[keys["Description"]].value
 
-                if type(row[3].value) == str:
-                    themes = [theme.strip() for theme in row[3].value.split(";")]
+                if type(row[keys["Theme"]].value) == str:
+                    themes = [theme.strip() for theme in row[keys["Theme"]].value.split(";")]
                 else:
                     themes = []
 
-                conforms_to = row[4].value
+                publisher = "" # Needs to be created first
+                contactpoint = "" # Needs to be created first
+                personaldata = row[keys["PersonalData"]]
+                populationcoverage = row[keys["PopulationCoverage"]].value
+                language = row[keys["Language"]].value
+                accessrights = row[keys["AccessRights"]].value
 
-                publisher_name = row[5].value
-
-                if type(row[6].value) == str:
-                    pages = [page.strip() for page in row[6].value.split(";")]
+                if type(row[keys["LandingPage"]].value) == str:
+                    pages = [page.strip() for page in row[keys["LandingPage"]].value.split(";")]
                 else:
                     pages = []
 
-                resource_type = row[7].value
+                distribution = "" # Not possible to assign?
+                vp_connection = row[keys["VPConnection"]].value
+                odrl_policy = row[keys["ODRL Policy"]].value
 
-                if type(row[8].value) == str:
-                    keywords = [item.strip() for item in row[8].value.split(";")]
+                if type(row[keys["Keyword"]].value) == str:
+                    keywords = [item.strip() for item in row[keys["Keyword"]].value.split(";")]
                 else:
                     keywords = []
 
-                language = row[9].value
-                access = row[10].value
-                access_type = row[11].value
+                logo = row[keys["Logo"]].value
+                identifier = row[keys["Identifier"]]
+                issued = row[keys["Issued"]]
+                modified = row[keys["Modified"]]
+                version = row[keys["Version"]]
+                conforms_to = row[keys["ConformsTo"]].value
 
                 # Create biobank object and add to biobank dictionary if it is a biobank
-                if resource_type == "Biobank":
-                    biobank = VPBiobank.VPBiobank(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher_name, pages)
-                    biobanks[biobank.TITLE] = biobank
+                biobank = VPBiobank.VPBiobank(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher, pages)
+                biobanks[biobank.TITLE] = biobank
+                if Config.DEBUG:
+                    print(vars(biobank))
 
         return biobanks
 
