@@ -113,7 +113,7 @@ class VPTemplateReader:
                 continue
 
             # Read row if it exists
-            if row[keys("Title")].value != None:
+            if row[keys["Title"]].value != None:
                 # Retrieve field values from excel files
                 license = row[keys["License"]].value
                 title = row[keys["Title"]].value
