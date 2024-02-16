@@ -14,7 +14,7 @@ class VPOrganisation():
     LANDING_PAGES = None
 
 
-    def __init__(self, parent_url, title, description, location, pages, logo, identifier):
+    def __init__(self,* , parent_url, title, description, location, pages, logo, identifier):
         """
 
         :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP

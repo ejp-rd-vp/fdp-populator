@@ -86,10 +86,14 @@ class VPTemplateReader:
                 # Create organisation object and add to organisation dictionary
                 self.row = row
                 self.keys = keys
-                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, 
-                        self.getval("Title"), self.getval("Description"),
-                        self.getval("Location"), self.getvals("LandingPage"),
-                        self.getval("Logo"), self.getval("Identifier"))
+                organisation = VPOrganisation.VPOrganisation(
+                    parent_url=Config.CATALOG_URL,
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    location=self.getval("Location"),
+                    pages=self.getvals("LandingPage"),
+                    logo=self.getval("Logo"),
+                    identifier=self.getval("Identifier"))
                 organisations[organisation.TITLE] = organisation
                 if Config.DEBUG: print(vars(organisation))
 
@@ -131,49 +135,19 @@ class VPTemplateReader:
 
             # Read row if it exists
             if row[keys["Title"]].value != None:
-                # Retrieve field values from excel files
-                license = row[keys["License"]].value
-                title = row[keys["Title"]].value
-                description = row[keys["Description"]].value
-
-                if type(row[keys["Theme"]].value) == str:
-                    themes = [theme.strip() for theme in row[keys["Theme"]].value.split(";")]
-                else:
-                    themes = []
-
-                publisher = "" # Needs to be created first
-                contactpoint = "" # Needs to be created first
-                personaldata = row[keys["PersonalData"]]
-                populationcoverage = row[keys["PopulationCoverage"]].value
-                language = row[keys["Language"]].value
-                accessrights = row[keys["AccessRights"]].value
-
-                if type(row[keys["LandingPage"]].value) == str:
-                    pages = [page.strip() for page in row[keys["LandingPage"]].value.split(";")]
-                else:
-                    pages = []
-
-                distribution = "" # Not possible to assign?
-                vp_connection = row[keys["VPConnection"]].value
-                odrl_policy = row[keys["ODRL Policy"]].value
-
-                if type(row[keys["Keyword"]].value) == str:
-                    keywords = [item.strip() for item in row[keys["Keyword"]].value.split(";")]
-                else:
-                    keywords = []
-
-                logo = row[keys["Logo"]].value
-                identifier = row[keys["Identifier"]]
-                issued = row[keys["Issued"]]
-                modified = row[keys["Modified"]]
-                version = row[keys["Version"]]
-                conforms_to = row[keys["ConformsTo"]].value
-
                 # Create biobank object and add to biobank dictionary if it is a biobank
-                biobank = VPBiobank.VPBiobank(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher, pages)
+                self.row = row
+                self.key = keys
+                biobank = VPBiobank.VPBiobank(parent_url=Config.CATALOG_URL,
+                    publisher_url=None,
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    populationcoverage=self.getval("PopulationCoverage"),
+                    themes=self.getvals("Theme"),
+                    publisher_name=None,
+                    pages=self.getvals("Publisher"))
                 biobanks[biobank.TITLE] = biobank
-                if Config.DEBUG:
-                    print(vars(biobank))
+                if Config.DEBUG: print(vars(biobank))
 
         return biobanks
 
