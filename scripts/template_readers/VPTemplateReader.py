@@ -8,6 +8,32 @@ class VPTemplateReader:
     <https://github.com/ejp-rd-vp/resource-metadata-schema/blob/master/template/EJPRD%20Resource%20Metadata%20template.xlsx>
     """
 
+    separator = "|"
+    row = []
+    keys = []
+
+    def getval(self, key):
+        """
+        This method returns a value
+        from a row based on the key
+
+        :return value
+        """
+        return self.row[self.keys[key]].value
+
+    def getvals(self, key):
+        """
+        This method returns multiple values
+        from a row based on the key and separator
+
+        :return values
+        
+        """
+        entry = self.row[self.keys[key]].value
+        if type(entry) == str:
+            return [value.strip() for value in entry.split(self.separator)]
+        return []
+
     def check_template_version(self):
         """
         This method checks whether the Excel template is the expected version
@@ -35,7 +61,8 @@ class VPTemplateReader:
         """
         # Prepare reading
         print("Reading organisation sheet...")
-        expected_column_names = ['Title', 'Description', 'LandingPage', 'Logo', 'Location', 'Identifier']
+        expected_column_names = ['Title', 'Description', 'LandingPage',
+                                  'Logo', 'Location', 'Identifier']
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
         # Open organisation excel sheet
@@ -56,24 +83,15 @@ class VPTemplateReader:
 
             # Read row if it exists
             if row[keys["Title"]].value != None:
-                # Retrieve field values from excel files
-                title = row[keys["Title"]].value
-                description = row[keys["Description"]].value
-
-                if type(row[keys["LandingPage"]].value) == str:
-                    pages = [page.strip() for page in row[keys["LandingPage"]].value.split(";")]
-                else:
-                    pages = []
-
-                logo = row[keys["Logo"]].value
-                location = row[keys["Location"]].value
-                identifier = row[keys["Identifier"]].value
-
                 # Create organisation object and add to organisation dictionary
-                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location, pages, logo, identifier)
+                self.row = row
+                self.keys = keys
+                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, 
+                        self.getval("Title"), self.getval("Description"),
+                        self.getval("Location"), self.getvals("LandingPage"),
+                        self.getval("Logo"), self.getval("Identifier"))
                 organisations[organisation.TITLE] = organisation
-                if Config.DEBUG:
-                    print(vars(organisation))
+                if Config.DEBUG: print(vars(organisation))
 
         return organisations
 
@@ -107,7 +125,6 @@ class VPTemplateReader:
             if first_row:
                 first_row=False
                 column_names = [cell.value for cell in row]
-                print(column_names)
                 if column_names != expected_column_names:
                     raise SystemError("Column names do not match in the biobank sheet")
                 continue
