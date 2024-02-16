@@ -274,6 +274,7 @@ class VPTemplateReader:
 
         :return: Dict of distributions
         """
+        print("Reading distribution sheet...")
         expected_column_names = ['License', 'Title', 'Description',
             'Publisher', 'Version', 'AccessRights', 'ODRLPolicy',
             'MediaType', 'IsPartOf', 'Type', 'AccessService']
@@ -298,6 +299,8 @@ class VPTemplateReader:
             # Read row if it exists
             if row[0].value != None:
                 # Create distribution object and add to distribution dictionary
+                self.row = row
+                self.keys = keys
                 distribution = VPDistribution.VPDistribution(
                     parent_url=Config.CATALOG_URL,
                     title=self.getval("Title"),
@@ -325,7 +328,17 @@ class VPTemplateReader:
 
         :return: Dict of dataservices
         """
-        # License	Type	Title	Description	PersonalData	Publisher	Theme	Language	ContactPoint	PopulationCoverage	AccessRights	ConformsTo	EndpointDescription	EndpointURL	LandingPage	VPConnection	ODRLPolicy	Logo	ServesDataset	Keyword	Identifier	Issued	Modified	Version	ConformsTo
+        print("Reading dataservice sheet...")
+        expected_column_names = ['License', 'Type', 'Title',
+            'Description', 'PersonalData', 'Publisher', 'Theme',
+            'Language', 'ContactPoint', 'PopulationCoverage',
+            'AccessRights', 'ConformsTo', 'EndpointDescription',
+            'EndpointURL', 'LandingPage', 'VPConnection',
+            'ODRLPolicy', 'Logo', 'ServesDataset', 'Keyword',
+            'Identifier', 'Issued', 'Modified', 'Version', 
+            'ConformsTo']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['DataService']
@@ -337,34 +350,31 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the dataservice sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                endpoint_description = row[2].value
-                license = row[3].value
-                endpoint_url = row[4].value
-                if type(row[5].value) == str:
-                    dataset_names = [item.strip() for item in row[5].value.split(";")]
-                else:
-                    dataset_names = []
-                version = row[6].value
-                if type(row[7].value) == str:
-                    keywords = [item.strip() for item in row[7].value.split(";")]
-                else:
-                    keywords = []
-                publisher_name = row[8].value
-                conforms_to = row[9].value
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create dataservice object and add to dataservice dictionary
-                dataservice = VPDataService.VPDataService(Config.CATALOG_URL, title, description, None, publisher_name, license,
-                                                          version, endpoint_url, dataset_names, [],
-                                                          conforms_to, access, access_type)
+                self.row = row
+                self.keys = keys
+                dataservice = VPDataService.VPDataService(
+                    parent_url=Config.CATALOG_URL,
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    publisher_url=self.getval("Publisher"),
+                    publisher_name=None,
+                    license=self.getval("License"),
+                    version=self.getval("Version"),
+                    endpoint_url=self.getval("EndpointURL"),
+                    serves_dataset_names=self.getvals("ServesDataset"),
+                    serves_dataset_urls=[],
+                    conforms_to=self.getval("ConformsTo"),
+                    access=self.getval("AccessRights"),
+                    access_type=None)
                 dataservices[dataservice.TITLE] = dataservice
+                if Config.DEBUG: print(vars(dataservice))
 
         return dataservices
