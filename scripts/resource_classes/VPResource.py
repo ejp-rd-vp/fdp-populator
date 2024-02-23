@@ -39,13 +39,13 @@ class VPResource:
         """
         :param parent_url: Parent's FDP URL of a resource
 
-        :param licence: Licence of a resource (mandatory)
+        :param licence: Licence of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0) (mandatory)
         :param title: Title of a resource (mandatory)
         :param description: Description of a resource (mandatory)
         :param theme: Themes of a resource (mandatory)
         :param publisher: Publisher of a resource (mandatory)
         :param contactpoint: Contactpoint of a resource (mandatory)
-        :param langauge: Langauge of a resource (mandatory)
+        :param langauge: Language of a resource (e.g. http://id.loc.gov/vocabulary/iso639-1/en) (mandatory)
         :param personaldata: Whether a resource is personal data (mandatory)
 
         :param conformsto: Specification the resource conforms to (optional)
@@ -60,14 +60,6 @@ class VPResource:
 
         :param accessrights: The accessrights of a resource (recommended)
         :param landingpage: The landingpage of a resource (recommended)
-
-
-        :param title: Title of a resource
-        :param description: Description of a resource
-        :param publisher_url: Publisher URL of a resource (e.g. https://orcid.org/0000-0002-1215-167X)
-        :param publisher_name: Publisher name of a resource
-        :param language: Language URL of a resource (e.g. http://id.loc.gov/vocabulary/iso639-1/en)
-        :param license: License URL of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0)
         """
 
         self.PARENT_URL = parent_url
