@@ -207,15 +207,29 @@ class VPTemplateReader:
                 # Create patient registry object and add to patientregistry dictionary if it is a patientregistry
                 self.row = row
                 self.keys = keys
-                patientregistry = VPPatientregistry.VPPatientregistry(
+                patientregistry = VPPatientregistry.VPPatientRegistry(
                     parent_url=Config.CATALOG_URL,
-                    publisher_url=None,
+                    license=self.getval("License"),
                     title=self.getval("Title"),
-                    description=self.getval("description"),
-                    populationcoverage=self.getval("PopulationCoverage"),
-                    themes=self.getvals("Themes"),
-                    publisher_name=None,
-                    pages=self.getvals("pages"))
+                    description=self.getval("Description"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    distribution=self.getval("Distribution"),
+                    populationcoverage=self.getval("PopulationCoverage"))
                 patientregistries[patientregistry.TITLE] = patientregistry
                 if Config.DEBUG: print(vars(patientregistry))
 

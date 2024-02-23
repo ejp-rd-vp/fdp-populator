@@ -1,28 +1,12 @@
 @prefix : <http://purl.org/ejp-rd/metadata-model/v1/example-rdf/> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-@prefix dct:   <http://purl.org/dc/terms/> .
 @prefix ejp:   <http://purl.org/ejp-rd/vocabulary/> .
-@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix sio:  <http://semanticscience.org/resource/> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix ordo: <http://www.orpha.net/ORDO/> .
 @prefix loc: <http://localhost/>.
 
 {{! Required triples }}
 loc:new a ejp:PatientRegistry ;
-  dct:isPartOf <{{&parent_url}}>;
-  dct:publisher <{{&publisher}}> ;
-  dct:title "{{title}}" ;
-  ejp:populationCoverage  :population_coverage ;
-  dcat:theme  {{&themes}} .
+  ejp:populationCoverage :population_coverage .
 
-:population_coverage  a sio:SIO_001166 ;
+:population_coverage a sio:SIO_001166 ;
   rdfs:label  "{{populationcoverage}}" .
-
-{{! Optional triples }}
-{{#description}}
-loc:new dct:description "{{description}}" .
-{{/description}}
-{{#pages}}
-loc:new foaf:page {{&pages}} .
-{{/pages}}
