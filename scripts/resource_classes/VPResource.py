@@ -11,7 +11,7 @@ class VPResource:
     LICENSE = None
     TITLE = None
     DESCRIPTION = None
-    THEME = None
+    THEME = []
     PUBLISHER = None
     CONTACTPOINT = None
     LANGUAGE = None
@@ -19,7 +19,7 @@ class VPResource:
 
     CONFORMSTO = None
     VPCONNECTION = None
-    KEYWORD = None
+    KEYWORD = []
     LOGO = None
     HASPOLICY = None
     IDENTIFIER = None
@@ -31,7 +31,7 @@ class VPResource:
     LANDINGPAGE = None
 
 
-    def __init__(self, parent_url, licence, title, description, theme, 
+    def __init__(self, parent_url, license, title, description, theme, 
                  publisher, contactpoint, language, personaldata, 
                  conformsto, vpconnection, keyword, logo, haspolicy, 
                  identifier, issued, modified, version, accessrights,
@@ -39,7 +39,7 @@ class VPResource:
         """
         :param parent_url: Parent's FDP URL of a resource
 
-        :param licence: Licence of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0) (mandatory)
+        :param license: Licence of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0) (mandatory)
         :param title: Title of a resource (mandatory)
         :param description: Description of a resource (mandatory)
         :param theme: Themes of a resource (mandatory)
@@ -64,7 +64,7 @@ class VPResource:
 
         self.PARENT_URL = parent_url
 
-        self.LICENSE = licence
+        self.LICENSE = license
         self.TITLE = title
         self.DESCRIPTION = description
         self.THEME = theme
