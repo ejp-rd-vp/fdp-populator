@@ -17,13 +17,13 @@ class VPOrganisation():
 
     def __init__(self,* , parent_url, title, description, pages, logo, location, identifier):
         """
-
-        :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP
-        :param title: Title of an organisation
-        :param description: Description of an organisation
-        :param location_title: title of a location of an organisation
-        :param location_title: description of a location of an organisation
-        :param pages: Landing page URLs of an organisation
+        :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP (mandatory)
+        :param title: Title of an organisation (mandatory)
+        :param description: Description of an organisation (mandatory)
+        :param pages: Landing page URLs of an organisation (mandatory)
+        :param logo: Logo of an organisation (optional)
+        :param location_title: title of a location of an organisation (optional)
+        :param identifier: identifier of an organisation (optional)
         """
         self.PARENT_URL = parent_url
         self.TITLE = title
