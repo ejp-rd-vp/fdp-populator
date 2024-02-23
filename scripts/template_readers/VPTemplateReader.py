@@ -398,18 +398,30 @@ class VPTemplateReader:
                 self.keys = keys
                 dataservice = VPDataService.VPDataService(
                     parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
                     title=self.getval("Title"),
                     description=self.getval("Description"),
-                    publisher_url=self.getval("Publisher"),
-                    publisher_name=None,
-                    license=self.getval("License"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRLPolicy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
                     version=self.getval("Version"),
-                    endpoint_url=self.getval("EndpointURL"),
-                    serves_dataset_names=self.getvals("ServesDataset"),
-                    serves_dataset_urls=[],
-                    conforms_to=self.getval("ConformsTo"),
-                    access=self.getval("AccessRights"),
-                    access_type=None)
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    otype=self.getval("Type"),
+                    servesdataset=self.getvals("ServesDataset"),
+                    endpointurl=self.getval("EndpointURL"),
+                    endpointdescription=self.getvals("EndpointDescription")
+                    )
                 dataservices[dataservice.TITLE] = dataservice
                 if Config.DEBUG: print(vars(dataservice))
 

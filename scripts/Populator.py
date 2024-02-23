@@ -53,6 +53,7 @@ class Populator:
         if Config.EJP_VP_INPUT_FILE != None:
             # Read the excel template
             vp_template_reader = VPTemplateReader.VPTemplateReader()
+            vp_template_reader.check_template_version()
             organisations = vp_template_reader.get_organisations()
             biobanks = vp_template_reader.get_biobanks()
             patientregistries = vp_template_reader.get_patientregistries()
@@ -68,8 +69,8 @@ class Populator:
             for biobank_name, biobank in biobanks.items():
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
-                    if biobank.PUBLISHER_NAME == organisation.TITLE:
-                        biobank.PUBLISHER_URL = organisation.URL
+                    if biobank.PUBLISHER == organisation.TITLE:
+                        biobank.PUBLISHER = organisation.URL
                 
                 # Create entry
                 biobank.URL = self.create_resource(biobank, "biobank")
@@ -78,8 +79,8 @@ class Populator:
             for patientregistry_name, patientregistry in patientregistries.items():
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
-                    if patientregistry.PUBLISHER_NAME == organisation.TITLE:
-                        patientregistry.PUBLISHER_URL = organisation.URL
+                    if patientregistry.PUBLISHER == organisation.TITLE:
+                        patientregistry.PUBLISHER = organisation.URL
 
                 # Create entry
                 patientregistry.URL = self.create_resource(patientregistry, "patientregistry")
@@ -88,8 +89,8 @@ class Populator:
             for dataset_name, dataset in datasets.items():
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
-                    if dataset.PUBLISHER_NAME == organisation.TITLE:
-                        dataset.PUBLISHER_URL = organisation.URL
+                    if dataset.PUBLISHER == organisation.TITLE:
+                        dataset.PUBLISHER = organisation.URL
 
                 # Create entry
                 dataset.URL = self.create_resource(dataset, "dataset")
@@ -98,13 +99,13 @@ class Populator:
             for distribution_name, distribution in distributions.items():
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
-                    if distribution.PUBLISHER_NAME == organisation.TITLE:
-                        distribution.PUBLISHER_URL = organisation.URL
+                    if distribution.PUBLISHER == organisation.TITLE:
+                        distribution.PUBLISHER = organisation.URL
 
-                # Link dataset
-                for dataset_name, dataset in datasets.items():
-                    if distribution.DATASET_TITLE == dataset.TITLE:
-                        distribution.PARENT_URL = dataset.URL
+                # # Link dataset
+                # for dataset_name, dataset in datasets.items():
+                #     if distribution.DATASET_TITLE == dataset.TITLE:
+                #         distribution.PARENT_URL = dataset.URL
 
                 # Create entry
                 distribution.URL = self.create_resource(distribution, "distribution")
@@ -112,14 +113,14 @@ class Populator:
             # Create dataservices
             for dataservice_name, dataservice in dataservices.items():
                 # Link datasets
-                for dataset_name, dataset in datasets.items():
-                    if dataset.TITLE in dataservice.DATASET_NAMES:
-                        dataservice.DATASET_URLS.append(dataset.URL)
+                # for dataset_name, dataset in datasets.items():
+                #     if dataset.TITLE in dataservice.DATASET_NAMES:
+                #         dataservice.DATASET_URLS.append(dataset.URL)
 
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
-                    if dataservice.PUBLISHER_NAME == organisation.TITLE:
-                        dataservice.PUBLISHER_URL = organisation.URL
+                    if dataservice.PUBLISHER == organisation.TITLE:
+                        dataservice.PUBLISHER = organisation.URL
 
                 # Create entry
                 dataservice.URL = self.create_resource(dataservice, "dataservice")
