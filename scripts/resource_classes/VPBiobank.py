@@ -42,7 +42,7 @@ class VPBiobank(VPResource.VPResource):
         :param accessrights: The accessrights of a biobank (recommended)
         :param landingpage: The landingpage of a biobank (recommended)
 
-        :param pouplationcoverage: The population coverage of a biobank (mandatory)
+        :param populationcoverage: The population coverage of a biobank (mandatory)
         """
 
         super().__init__(parent_url, license, title, description, 

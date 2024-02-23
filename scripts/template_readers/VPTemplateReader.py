@@ -260,21 +260,26 @@ class VPTemplateReader:
                 self.keys = keys
                 dataset = VPDataset.VPDataset(
                     parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
                     title=self.getval("Title"),
                     description=self.getval("Description"),
-                    keywords=self.getvals("Keyword"),
-                    themes=self.getvals("Theme"),
-                    publisher_url=self.getvals("Publisher"),
-                    publisher_name=None,
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
                     language=self.getval("Language"),
-                    license=self.getval("License"),
-                    page=self.getval("LandingPage"),
-                    contact_point=self.getval("ContactPoint"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
                     vpconnection=self.getval("VPConnection"),
-                    related=None,
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
                     version=self.getval("Version"),
-                    access=self.getval("AccessRights"),
-                    access_type=None)
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    distribution=self.getval("Distribution"))
                 datasets[dataset.TITLE] = dataset
                 if Config.DEBUG: print(vars(dataset))
 
