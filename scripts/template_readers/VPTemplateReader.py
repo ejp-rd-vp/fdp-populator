@@ -160,6 +160,7 @@ class VPTemplateReader:
                     version=self.getval("Version"),
                     accessrights=self.getval("AccessRights"),
                     landingpage=self.getval("LandingPage"),
+                    distribution=self.getval("Distribution"),
                     populationcoverage=self.getval("PopulationCoverage"))
 
                 biobanks[biobank.TITLE] = biobank

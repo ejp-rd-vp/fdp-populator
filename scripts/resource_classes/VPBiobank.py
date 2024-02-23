@@ -1,10 +1,10 @@
 import Config
 import chevron
 from rdflib import Graph
-from resource_classes import VPResource
+from resource_classes import VPDataset
 
 
-class VPBiobank(VPResource.VPResource):
+class VPBiobank(VPDataset.VPDataset):
     """
     This class describes the biobank class
     """
@@ -16,7 +16,7 @@ class VPBiobank(VPResource.VPResource):
                  theme, publisher, contactpoint, language, personaldata, 
                  conformsto, vpconnection, keyword, logo, haspolicy, 
                  identifier, issued, modified, version, accessrights,
-                 landingpage, populationcoverage):
+                 landingpage, distribution, populationcoverage):
         """
         :param parent_url: Parent's FDP URL of a biobank
 
@@ -42,14 +42,22 @@ class VPBiobank(VPResource.VPResource):
         :param accessrights: The accessrights of a biobank (recommended)
         :param landingpage: The landingpage of a biobank (recommended)
 
+        :param distribution: The distribution of a biobank (optional)
+
         :param populationcoverage: The population coverage of a biobank (mandatory)
         """
 
-        super().__init__(parent_url, license, title, description, 
-                theme, publisher, contactpoint, language, personaldata, 
-                 conformsto, vpconnection, keyword, logo, haspolicy, 
-                 identifier, issued, modified, version, accessrights,
-                 landingpage)
+        super().__init__(parent_url=parent_url, license=license, 
+                        title=title, description=description,
+                        theme=theme, publisher=publisher,
+                        contactpoint=contactpoint, language=language, 
+                        personaldata=personaldata, conformsto=conformsto, 
+                        vpconnection=vpconnection, keyword=keyword, 
+                        logo=logo, haspolicy=haspolicy, 
+                        identifier=identifier, issued=issued, 
+                        modified=modified, version=version,
+                        accessrights=accessrights, landingpage=landingpage, 
+                        distribution=distribution)
 
         self.POPULATIONCOVERAGE = populationcoverage
 
