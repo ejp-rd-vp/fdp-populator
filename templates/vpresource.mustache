@@ -6,15 +6,15 @@
 @prefix ejp:   <http://purl.org/ejp-rd/vocabulary/> .
 
 loc:new
-    dct:isPartOf <{{&parent_url}}>;
-    dct:license <{{&license}} ;
+    dct:isPartOf <{{&parent_url}}> ;
+    dct:license <{{&license}}> ;
     dct:title "{{title}}" ;
     dct:description "{{description}}" ;
     dcat:theme {{&theme_str}} ;
     dct:publisher <{{&publisher}}> ;
     dcat:contactpoint <{{&contactpoint}}> ;
-    dct:language <{{&langauge}}> ;
-    ejp:personalData "{{personaldata}}"
+    dct:language <{{&language}}> ;
+    ejp:personalData "{{personaldata}}" .
 
 {{#conformsto}}
 loc:new dct:conformsTo <{{&conformsto}}> .
@@ -23,7 +23,7 @@ loc:new dct:conformsTo <{{&conformsto}}> .
 loc:new ejp:vpConnection <{{&vpconnection}}> .
 {{/vpconnection}}
 {{#keyword}}
-loc:new dct:keyword keyword {{&keyword_str}} .
+loc:new dct:keyword keyword {{keyword_str}} .
 {{/keyword}}
 {{#logo}}
 loc:new foaf:logo logo <{{&logo}}> .

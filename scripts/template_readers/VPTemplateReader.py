@@ -139,15 +139,34 @@ class VPTemplateReader:
                 # Create biobank object and add to biobank dictionary if it is a biobank
                 self.row = row
                 self.keys = keys
+                #     def __init__(self,* , parent_url, license, title, description, 
+                #  theme, publisher, contactpoint, language, personaldata, 
+                #  conformsto, vpconnection, keyword, logo, haspolicy, 
+                #  identifier, issued, modified, version, accessrights,
+                #  landingpage, populationcoverage):
                 biobank = VPBiobank.VPBiobank(
                     parent_url=Config.CATALOG_URL,
-                    publisher_url=None,
+                    license=self.getval("License"),
                     title=self.getval("Title"),
                     description=self.getval("Description"),
-                    populationcoverage=self.getval("PopulationCoverage"),
-                    themes=self.getvals("Theme"),
-                    publisher_name=None,
-                    pages=self.getvals("Publisher"))
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    populationcoverage=self.getval("PopulationCoverage"))
+
                 biobanks[biobank.TITLE] = biobank
                 if Config.DEBUG: print(vars(biobank))
 

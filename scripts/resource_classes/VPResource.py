@@ -1,3 +1,5 @@
+import Config
+import Utils
 import chevron
 from rdflib import Graph
 
@@ -70,7 +72,7 @@ class VPResource:
         self.THEME = theme
         self.PUBLISHER = publisher
         self.CONTACTPOINT = contactpoint
-        self.LANGUAGE = language
+        self.LANGUAGE = "http://id.loc.gov/vocabulary/iso639-1/" + language
         self.PERSONALDATA = personaldata
 
         self.CONFORMSTO = conformsto
@@ -87,21 +89,31 @@ class VPResource:
         self.LANDINGPAGE = landingpage
 
     def get_graph(self):
+        print("print(self.THEME)")
+        print(self.THEME)
+        utils = Utils.Utils()
+
         graph = Graph()
 
-        if self.ACCESS_TYPE == "Access Information":
-            self.ACCESS_TYPE = "dct:accessRight"
-        elif self.ACCESS_TYPE == "ODRL Policy":
-            self.ACCESS_TYPE = "odrl:hasPolicy"
-        else:
-            print("Unexcepted access type: ", self.ACCESS_TYPE, ", defaulting to no access information")
-            self.ACCESS = ""
+        theme_str = utils.list_to_rdf_URIs(self.THEME)
+        keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
+
+        print(theme_str)
 
         with open('../templates/vpresource.mustache', 'r') as f:
-            body = chevron.render(f, {'parent_url': self.PARENT_URL, 'title': self.TITLE,
-                                      'description': self.DESCRIPTION, 'publisher_url': self.PUBLISHER_URL,
-                                      'license_url': self.LICENSE_URL, 'version': self.VERSION,
-                                      'access': self.ACCESS, 'access_type': self.ACCESS_TYPE})
+            body = chevron.render(f, {'parent_url': self.PARENT_URL, 'license': self.LICENSE,
+                                      'title': self.TITLE, 'description': self.DESCRIPTION,
+                                      'theme_str': theme_str, 'publisher': self.PUBLISHER,
+                                      'contactpoint': self.CONTACTPOINT, 'language': self.LANGUAGE,
+                                      'personaldata': self.PERSONALDATA, 'conformsto': self.CONFORMSTO,
+                                      'vpconnection': self.VPCONNECTION, 'keyword_str': keyword_str,
+                                      'logo': self.LOGO, 'haspolicy': self.HASPOLICY,
+                                      'identifier': self.IDENTIFIER, 'issued': self.ISSUED,
+                                      'modified': self.MODIFIED, 'version': self.VERSION,
+                                      'accessrights': self.ACCESSRIGHTS, 'landingpage': self.LANDINGPAGE})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return(graph)

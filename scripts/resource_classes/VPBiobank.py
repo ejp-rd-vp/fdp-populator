@@ -1,9 +1,10 @@
+import Config
 import chevron
 from rdflib import Graph
 from resource_classes import VPResource
 
 
-class VPBiobank():
+class VPBiobank(VPResource.VPResource):
     """
     This class describes the biobank class
     """
@@ -44,7 +45,7 @@ class VPBiobank():
         :param pouplationcoverage: The population coverage of a biobank (mandatory)
         """
 
-        super().__init__(self, parent_url, license, title, description, 
+        super().__init__(parent_url, license, title, description, 
                 theme, publisher, contactpoint, language, personaldata, 
                  conformsto, vpconnection, keyword, logo, haspolicy, 
                  identifier, issued, modified, version, accessrights,
@@ -58,29 +59,14 @@ class VPBiobank():
 
         :return: biobank RDF
         """
-        # Create themes list
-        theme_str = ""
-        for theme in self.THEMES:
-            theme_str = theme_str + " <" + theme + ">,"
-        theme_str = theme_str[:-1]
-
-        # Create pages list
-        page_str = ""
-        for page in self.LANDING_PAGES:
-            page_str = page_str + " <" + page + ">,"
-        page_str = page_str[:-1]
+        graph = super().get_graph()
 
         # Render RDF
-        graph = Graph()
-
         with open('../templates/vpbiobank.mustache', 'r') as f:
-            body = chevron.render(f, {'parent_url': self.PARENT_URL,
-                                      'title': self.TITLE,
-                                      'description': self.DESCRIPTION,
-                                      'populationcoverage': self.POPULATIONCOVERAGE,
-                                      'themes': theme_str,
-                                      'publisher': self.PUBLISHER_URL,
-                                      'pages': page_str})
+            body = chevron.render(f, {'populationcoverage': self.POPULATIONCOVERAGE})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return graph
