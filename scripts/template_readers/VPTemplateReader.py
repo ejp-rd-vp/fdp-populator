@@ -337,19 +337,20 @@ class VPTemplateReader:
                 self.keys = keys
                 distribution = VPDistribution.VPDistribution(
                     parent_url=Config.CATALOG_URL,
-                    title=self.getval("Title"),
-                    dataset_title=None,
-                    description=self.getval("Description"),
-                    publisher_url=self.getval("Publisher"),
-                    publisher_name=None,
                     license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    publisher=self.getval("Publisher"),
                     version=self.getval("Version"),
-                    url=None,
-                    url_type=self.getval("Type"),
+                    accessrights=self.getval("AccessRights"),
+                    haspolicy=self.getval("ODRLPolicy"),
                     mediatype=self.getval("MediaType"),
-                    ispartof=self.getval("IsPartOf"),
-                    access=self.getval("AccessRights"),
-                    access_type=None)
+                    ispartof=self.getvals("IsPartOf"),
+                    accessurl=None,
+                    downloadurl=None,
+                    accessservice=self.getval("AccessService"),
+                    conformsto=None
+                )
                 distributions[distribution.TITLE] = distribution
                 if Config.DEBUG: print(vars(distribution))
 

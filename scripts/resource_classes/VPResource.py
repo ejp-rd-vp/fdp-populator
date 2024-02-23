@@ -89,16 +89,12 @@ class VPResource:
         self.LANDINGPAGE = landingpage
 
     def get_graph(self):
-        print("print(self.THEME)")
-        print(self.THEME)
         utils = Utils.Utils()
 
         graph = Graph()
 
         theme_str = utils.list_to_rdf_URIs(self.THEME)
         keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
-
-        print(theme_str)
 
         with open('../templates/vpresource.mustache', 'r') as f:
             body = chevron.render(f, {'parent_url': self.PARENT_URL, 'license': self.LICENSE,

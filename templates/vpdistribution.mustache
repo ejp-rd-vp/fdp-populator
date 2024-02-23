@@ -2,18 +2,37 @@
 @prefix dct: <http://purl.org/dc/terms/>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix loc: <http://localhost/>.
+@prefix odrl: <http://www.w3.org/ns/odrl/2/>.
 
-loc:new a dcat:Distribution.
+loc:new
+    a dcat:Distribution ;
+    dct:license <{{&license}}> ;
+    dct:title "{{title}}" ;
+    dct:description "{{description}}" ;
+    dct:publisher <{{&publisher}}> ;
+    dcat:version "{{version}}" .
 
-{{#is_downloadurl}}
-loc:new dcat:downloadURL <{{&url}}>.
-{{/is_downloadurl}}
-{{#is_accessurl}}
-loc:new dcat:accessURL <{{&url}}>.
-{{/is_accessurl}}
+{{#accessrights}}
+loc:new dct:accessRights <{{&accessrights}}> .
+{{/accessrights}}
+{{#haspolicy}}
+loc:new odrl:hasPolicy <{{&haspolicy}}> .
+{{/haspolicy}}
 {{#mediatype}}
-loc:new dcat:mediaType {{mediatype}}.
+loc:new dcat:mediaType "{{mediatype}}" .
 {{/mediatype}}
 {{#ispartof}}
-loc:new dct:isPartOf {{ispartof}}.
+loc:new dct:isPartOf {{&ispartof}} .
 {{/ispartof}}
+{{#accessurl}}
+loc:new dcat:accessURL <{{&acessurl}}> .
+{{/accessurl}}
+{{#downloadurl}}
+loc:new dcat:downloadURL <{{downloadurl}}> .
+{{/downloadurl}}
+{{#accessservice}}
+loc:new dcat:accessService <{{&accessservice}}> .
+{{/accessservice}}
+{{#conformsto}}
+loc:new dct:conformsTo <{{&conformsto}}> .
+{{/conformsto}}
