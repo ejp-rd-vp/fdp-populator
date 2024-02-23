@@ -139,11 +139,6 @@ class VPTemplateReader:
                 # Create biobank object and add to biobank dictionary if it is a biobank
                 self.row = row
                 self.keys = keys
-                #     def __init__(self,* , parent_url, license, title, description, 
-                #  theme, publisher, contactpoint, language, personaldata, 
-                #  conformsto, vpconnection, keyword, logo, haspolicy, 
-                #  identifier, issued, modified, version, accessrights,
-                #  landingpage, populationcoverage):
                 biobank = VPBiobank.VPBiobank(
                     parent_url=Config.CATALOG_URL,
                     license=self.getval("License"),
