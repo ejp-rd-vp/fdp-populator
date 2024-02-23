@@ -10,13 +10,15 @@ class VPOrganisation():
     PARENT_URL = None
     TITLE = None
     DESCRIPTION = None
-    LOCATION_TITLE = None
-    LOCATION_DESCRIPTION = None
     LANDING_PAGES = None
+    LOGO = None
+    LOCATION = None
+    IDENTIFIER = None
 
 
     def __init__(self,* , parent_url, title, description, pages, logo, location, identifier):
         """
+
         :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP (mandatory)
         :param title: Title of an organisation (mandatory)
         :param description: Description of an organisation (mandatory)
