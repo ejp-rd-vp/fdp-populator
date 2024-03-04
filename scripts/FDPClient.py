@@ -29,7 +29,11 @@ class FDPClient:
 
         response = requests.request("POST", url, data=payload, headers=headers)
         data = json.loads(response.text)
-        return data["token"]
+        try:
+            return data["token"]
+        except:
+            raise SystemError("Error getting authentication token. Is the configuration of the FDP URL, username and password correct? Make sure the URL's don't end with a '/' character.")
+        
 
     def fdp_create_metadata(self, data, resource_type):
 
@@ -48,7 +52,7 @@ class FDPClient:
         try:
             resource_url = response.headers["Location"]
         except:
-            print("Error getting location url")
+            raise SystemError("Error getting location url after sending RDF. Did the RDF fail validation in the FDP? (Then check the FPD logs)")
 
         self.fdp_publish_metadata(resource_url.replace(self.FDP_P_URL, self.FDP_URL))
 
