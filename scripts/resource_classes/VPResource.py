@@ -47,7 +47,7 @@ class VPResource:
         :param theme: Themes of a resource (mandatory)
         :param publisher: Publisher of a resource (mandatory)
         :param contactpoint: Contactpoint of a resource (mandatory)
-        :param langauge: Language of a resource (e.g. http://id.loc.gov/vocabulary/iso639-1/en) (mandatory)
+        :param language: Language of a resource (e.g. http://id.loc.gov/vocabulary/iso639-1/en) (mandatory)
         :param personaldata: Whether a resource is personal data (mandatory)
 
         :param conformsto: Specification the resource conforms to (optional)
