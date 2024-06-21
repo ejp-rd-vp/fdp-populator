@@ -95,8 +95,11 @@ class VPResource:
 
         theme_str = utils.list_to_rdf_URIs(self.THEME)
         keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
-        accessrights_str = utils.list_to_rdf_URIs(self.ACCESSRIGHTS)
-        landingpage_str = utils.list_to_rdf_URIs(self.LANDINGPAGE)
+        accessrights_str = utils.list_to_rdf_URIs([self.ACCESSRIGHTS[0]])
+        landingpage_str = utils.list_to_rdf_URIs([self.LANDINGPAGE[0]])
+        print("WARNING: only first access right URI is used due to metadata schema discrepancy")
+        print("WARNING: only first landing page URI is used due to metadata schema discrepancy")
+        print("WARNING: placeholder publisher is added due to metadata schema discrepancy")
         if type(self.VERSION) != str or len(self.VERSION) == 0:
             self.VERSION = 1
 

@@ -67,6 +67,8 @@ class Populator:
             # # Create organisation entries first
             # for organisation_name, organisation in organisations.items():
             #     organisation.URL = self.create_resource(organisation, "organisation")
+            print("WARNING: organisation metadata is dropped due to metadata schema discrepancy")
+
 
             # Create biobank entries
             for biobank_name, biobank in biobanks.items():
