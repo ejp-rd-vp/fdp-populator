@@ -68,6 +68,8 @@ class Populator:
             # # Create organisation entries first
             # for organisation_name, organisation in organisations.items():
             #     organisation.URL = self.create_resource(organisation, "organisation")
+            warn("Multiple descriptions for a resource are now allowed in the implementation", Warning)
+            warn("PopulationCoverage in the dataset sheet is not used", Warning)
             warn("Organisation metadata is dropped due to metadata schema discrepancy", Warning)
 
             # Create biobank entries

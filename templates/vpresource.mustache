@@ -4,6 +4,8 @@
 @prefix loc: <http://localhost/>.
 @prefix odrl: <http://www.w3.org/ns/odrl/2/>.
 @prefix ejp:   <https://w3id.org/ejp-rd/vocabulary#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 
 loc:new
     a dcat:Resource ;
@@ -15,8 +17,9 @@ loc:new
     dct:publisher [ a foaf:Agent; 
         foaf:name "EJP RD";
         foaf:logo <https://www.ejprarediseases.org/wp-content/uploads/2020/11/cropped-EJP-RD-txt-horizontal.png>
-    ];
-    dcat:contactpoint <{{&contactpoint}}> ;
+    ] ;
+    dcat:contactPoint [ a vcard:Agent ;
+        vcard:url <{{&contactpoint}}> ] ;
     dct:language <{{&language}}> ;
     ejp:personalData "{{personaldata}}" ;
     dct:hasVersion "{{version}}" ;
@@ -26,25 +29,25 @@ loc:new
 loc:new dct:conformsTo <{{&conformsto}}> .
 {{/conformsto}}
 {{#vpconnection}}
-loc:new ejp:vpConnection <{{&vpconnection}}> .
+loc:new ejp:vpConnection {{&vpconnection}} .
 {{/vpconnection}}
-{{#keyword}}
-loc:new dct:keyword keyword {{keyword_str}} .
-{{/keyword}}
+{{#keyword_str}}
+loc:new dct:keyword {{&keyword_str}} .
+{{/keyword_str}}
 {{#logo}}
-loc:new foaf:logo logo <{{&logo}}> .
+loc:new foaf:logo <{{&logo}}> .
 {{/logo}}
 {{#haspolicy}}
-loc:new odrl:hasPolicy <{{&haspolicy}}> .
+loc:new odrl:hasPolicy {{&haspolicy}} .
 {{/haspolicy}}
 {{#identifier}}
 loc:new dct:identifier "{{identifier}}" .
 {{/identifier}}
 {{#issued}}
-loc:new dct:issued "{{issued}}" .
+loc:new dct:issued "{{issued}}"^^xsd:dateTime .
 {{/issued}}
 {{#modified}}
-loc:new dct:modified "{{modified}}" .
+loc:new dct:modified "{{modified}}"^^xsd:dateTime .
 {{/modified}}
 {{#accessrights}}
 loc:new dct:accessRights {{&accessrights}} .
