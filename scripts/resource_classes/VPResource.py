@@ -95,13 +95,22 @@ class VPResource:
         graph = Graph()
 
         theme_str = utils.list_to_rdf_URIs(self.THEME)
+        if len(self.KEYWORD) == 0:
+            self.KEYWORD = ["resource"]
         keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
         accessrights_str = utils.list_to_rdf_URIs([self.ACCESSRIGHTS[0]])
         landingpage_str = utils.list_to_rdf_URIs([self.LANDINGPAGE[0]])
+        vpconnection_str = utils.list_to_rdf_URIs(self.VPCONNECTION)
+        vpconnection_str = None
+        haspolicy_str = utils.list_to_rdf_URIs([self.HASPOLICY[0]])
         warn("Only first access right URI is used due to metadata schema discrepancy", Warning)
         warn("Only first landing page URI is used due to metadata schema discrepancy", Warning)
         warn("Placeholder publisher is added due to metadata schema discrepancy", Warning)
-        if type(self.VERSION) != str or len(self.VERSION) == 0:
+        warn("VP connection is dropped because the SHACL implementation is out of date", Warning)
+        warn("Only first ODRL policy is used due to metadata schema discrepancy", Warning)
+        warn("Keyword is added if there are no keywords to conform to implementation", Warning)
+        warn("vcard might me incompatible with some FDP configurations", Warning)
+        if self.VERSION is None or len(str(self.VERSION)) == 0:
             self.VERSION = 1
 
         with open('../templates/vpresource.mustache', 'r') as f:
@@ -110,8 +119,8 @@ class VPResource:
                                       'theme_str': theme_str, 'publisher': self.PUBLISHER,
                                       'contactpoint': self.CONTACTPOINT, 'language': self.LANGUAGE,
                                       'personaldata': self.PERSONALDATA, 'conformsto': self.CONFORMSTO,
-                                      'vpconnection': self.VPCONNECTION, 'keyword_str': keyword_str,
-                                      'logo': self.LOGO, 'haspolicy': self.HASPOLICY,
+                                      'vpconnection': vpconnection_str, 'keyword_str': keyword_str,
+                                      'logo': self.LOGO, 'haspolicy': haspolicy_str,
                                       'identifier': self.IDENTIFIER, 'issued': self.ISSUED,
                                       'modified': self.MODIFIED, 'version': self.VERSION,
                                       'accessrights': accessrights_str, 'landingpage': landingpage_str})
