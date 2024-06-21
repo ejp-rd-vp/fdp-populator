@@ -12,10 +12,15 @@ loc:new
     dct:title "{{title}}" ;
     dct:description "{{description}}" ;
     dcat:theme {{&theme_str}} ;
-    dct:publisher <{{&publisher}}> ;
+    dct:publisher [ a foaf:Agent; 
+        foaf:name "EJP RD";
+        foaf:logo <https://www.ejprarediseases.org/wp-content/uploads/2020/11/cropped-EJP-RD-txt-horizontal.png>
+    ];
     dcat:contactpoint <{{&contactpoint}}> ;
     dct:language <{{&language}}> ;
-    ejp:personalData "{{personaldata}}" .
+    ejp:personalData "{{personaldata}}" ;
+    dct:hasVersion "{{version}}" ;
+    dcat:version "{{version}}" .
 
 {{#conformsto}}
 loc:new dct:conformsTo <{{&conformsto}}> .
@@ -41,9 +46,6 @@ loc:new dct:issued "{{issued}}" .
 {{#modified}}
 loc:new dct:modified "{{modified}}" .
 {{/modified}}
-{{#version}}
-loc:new dcat:version "{{version}}" .
-{{/version}}
 {{#accessrights}}
 loc:new dct:accessRights <{{&accessrights}}> .
 {{/accessrights}}

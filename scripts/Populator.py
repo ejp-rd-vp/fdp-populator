@@ -61,9 +61,12 @@ class Populator:
             distributions = vp_template_reader.get_distributions()
             dataservices = vp_template_reader.get_dataservices()
 
-            # Create organisation entries first
-            for organisation_name, organisation in organisations.items():
-                organisation.URL = self.create_resource(organisation, "organisation")
+            # Creation of organisations is skipped because 
+            # it is missing in the implementation. Placeholder triples
+            # for the publisher have instead been added to the mustache files.
+            # # Create organisation entries first
+            # for organisation_name, organisation in organisations.items():
+            #     organisation.URL = self.create_resource(organisation, "organisation")
 
             # Create biobank entries
             for biobank_name, biobank in biobanks.items():

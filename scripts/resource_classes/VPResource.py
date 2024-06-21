@@ -95,6 +95,8 @@ class VPResource:
 
         theme_str = utils.list_to_rdf_URIs(self.THEME)
         keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
+        if type(self.VERSION) != str or len(self.VERSION) == 0:
+            self.VERSION = 1
 
         with open('../templates/vpresource.mustache', 'r') as f:
             body = chevron.render(f, {'parent_url': self.PARENT_URL, 'license': self.LICENSE,
