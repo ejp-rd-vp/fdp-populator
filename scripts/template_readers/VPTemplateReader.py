@@ -292,8 +292,8 @@ class VPTemplateReader:
                     issued=self.getval("Issued"),
                     modified=self.getval("Modified"),
                     version=self.getval("Version"),
-                    accessrights=self.getval("AccessRights"),
-                    landingpage=self.getval("LandingPage"),
+                    accessrights=self.getvals("AccessRights"),
+                    landingpage=self.getvals("LandingPage"),
                     distribution=self.getval("Distribution"))
                 datasets[dataset.TITLE] = dataset
                 if Config.DEBUG: print(vars(dataset))

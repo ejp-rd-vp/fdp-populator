@@ -95,6 +95,8 @@ class VPResource:
 
         theme_str = utils.list_to_rdf_URIs(self.THEME)
         keyword_str = utils.list_to_rdf_literals(self.KEYWORD)
+        accessrights_str = utils.list_to_rdf_URIs(self.ACCESSRIGHTS)
+        landingpage_str = utils.list_to_rdf_URIs(self.LANDINGPAGE)
         if type(self.VERSION) != str or len(self.VERSION) == 0:
             self.VERSION = 1
 
@@ -108,7 +110,7 @@ class VPResource:
                                       'logo': self.LOGO, 'haspolicy': self.HASPOLICY,
                                       'identifier': self.IDENTIFIER, 'issued': self.ISSUED,
                                       'modified': self.MODIFIED, 'version': self.VERSION,
-                                      'accessrights': self.ACCESSRIGHTS, 'landingpage': self.LANDINGPAGE})
+                                      'accessrights': accessrights_str, 'landingpage': landingpage_str})
             if Config.DEBUG:
                 print("RDF created with Mustache template:")
                 print(body)
