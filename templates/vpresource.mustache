@@ -3,21 +3,52 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix loc: <http://localhost/>.
 @prefix odrl: <http://www.w3.org/ns/odrl/2/>.
+@prefix ejp:   <https://w3id.org/ejp-rd/vocabulary#> .
 
 loc:new
-    dct:isPartOf <{{&parent_url}}>;
-    dct:hasVersion "{{version}}";
-    dct:title "{{title}}".
+    a dcat:Resource ;
+    dct:isPartOf <{{&parent_url}}> ;
+    dct:license <{{&license}}> ;
+    dct:title "{{title}}" ;
+    dct:description "{{description}}" ;
+    dcat:theme {{&theme_str}} ;
+    dct:publisher [ a foaf:Agent; 
+        foaf:name "EJP RD";
+        foaf:logo <https://www.ejprarediseases.org/wp-content/uploads/2020/11/cropped-EJP-RD-txt-horizontal.png>
+    ];
+    dcat:contactpoint <{{&contactpoint}}> ;
+    dct:language <{{&language}}> ;
+    ejp:personalData "{{personaldata}}" ;
+    dct:hasVersion "{{version}}" ;
+    dcat:version "{{version}}" .
 
-{{#description}}
-loc:new dct:description "{{description}}".
-{{/description}}
-{{#publisher_url}}
-loc:new dct:publisher <{{&publisher_url}}>.
-{{/publisher_url}}
-{{#license_url}}
-loc:new dct:license <{{&license_url}}>.
-{{/license_url}}
-{{#access}}
-loc:new {{access_type}} <{{&access}}>.
-{{/access}}
+{{#conformsto}}
+loc:new dct:conformsTo <{{&conformsto}}> .
+{{/conformsto}}
+{{#vpconnection}}
+loc:new ejp:vpConnection <{{&vpconnection}}> .
+{{/vpconnection}}
+{{#keyword}}
+loc:new dct:keyword keyword {{keyword_str}} .
+{{/keyword}}
+{{#logo}}
+loc:new foaf:logo logo <{{&logo}}> .
+{{/logo}}
+{{#haspolicy}}
+loc:new odrl:hasPolicy <{{&haspolicy}}> .
+{{/haspolicy}}
+{{#identifier}}
+loc:new dct:identifier "{{identifier}}" .
+{{/identifier}}
+{{#issued}}
+loc:new dct:issued "{{issued}}" .
+{{/issued}}
+{{#modified}}
+loc:new dct:modified "{{modified}}" .
+{{/modified}}
+{{#accessrights}}
+loc:new dct:accessRights {{&accessrights}} .
+{{/accessrights}}
+{{#landingpage}}
+loc:new dcat:landingPage {{&landingpage}} .
+{{/landingpage}}

@@ -24,3 +24,8 @@ Alternatively, [this](https://colab.research.google.com/drive/1YeARH-hBJbg5Nz2MM
 
 ## EJP RD
 The EJP RD version of this tool requires special configuration of the FAIR Data Point, following the [EJP RD metadata schema](https://github.com/ejp-rd-vp/resource-metadata-schema).
+
+### Status
+Required and recommended metadata fields for dataset resources have been successfuly tested by SHACL validation. Several limitations still exist due to metadata schema discrepancies. FDP API interaction not tested yet.
+
+

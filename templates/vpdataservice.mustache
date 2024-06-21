@@ -5,11 +5,14 @@
 
 
 loc:new a dcat:DataService ;
-    dcat:endpointURL <{{&endpoint_url}}> .
- 
-{{#dataset_urls}}
-loc:new dcat:servesDataset {{&dataset_urls}} .
-{{/dataset_urls}}
-{{#conforms_to}}
-loc:new dct:conformsTo {{&conforms_to}} .
-{{/conforms_to}}
+    dct:type <{{&type}}> .
+
+{{#serversdataset_str}}
+loc:new dcat:servesDataset {{&serversdataset_str}} .
+{{/serversdataset_str}}
+{{#endpointurl}}
+loc:new dcat:endpointURL <{{&endpointurl}}> .
+{{/endpointurl}}
+{{#endpointdescription_str}}
+loc:new dcat:endpointDescription {{&endpointdescription_str}} .
+{{/endpointdescription_str}}

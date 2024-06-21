@@ -4,9 +4,54 @@ from resource_classes import VPOrganisation, VPBiobank, VPPatientregistry, VPDat
 
 class VPTemplateReader:
     """
-    NOTE: this class is based on the folling specification:
+    NOTE: this class is based on the following specification as of November 10 2023:
     <https://github.com/ejp-rd-vp/resource-metadata-schema/blob/master/template/EJPRD%20Resource%20Metadata%20template.xlsx>
     """
+
+    separator = "|"
+    row = []
+    keys = []
+
+    def getval(self, key):
+        """
+        This method returns a value
+        from a row based on the key
+
+        :return value
+        """
+        return self.row[self.keys[key]].value
+
+    def getvals(self, key):
+        """
+        This method returns multiple values
+        from a row based on the key and separator
+
+        :return values
+        
+        """
+        entry = self.row[self.keys[key]].value
+        if type(entry) == str:
+            return [value.strip() for value in entry.split(self.separator)]
+        return []
+
+    def check_template_version(self):
+        """
+        This method checks whether the Excel template is the expected version
+
+        :return: nothing
+        """
+        print("Checking sheet names...")
+        wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
+        expected_sheets = ['Organisation', 'ContactPoint', 'Biobank', 
+                           'PatientRegistry', 'Guideline', 'Dataset', 
+                           'Distribution', 'DataService', 'Catalog']
+
+        sheet_exists = [sheet in wb.sheetnames for sheet in expected_sheets]
+        if False in sheet_exists:
+            raise SystemError("A sheet in the Excel template is missing. The sheet could be a different version.")
+        
+        print("Excel template contains expected sheets.")
+
     def get_organisations(self):
         """
         This method creates organisation objects by extracting content from the ejp vp input file.
@@ -15,36 +60,43 @@ class VPTemplateReader:
 
         :return: Dict of organisations
         """
+        # Prepare reading
+        print("Reading organisation sheet...")
+        expected_column_names = ['Title', 'Description', 'LandingPage',
+                                  'Logo', 'Location', 'Identifier']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Organisation']
-        
+
         # Loop over rows of excel sheet
         first_row = True
         organisations = {}
         for row in ws:
-            # Skip header
+            # Check header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the organisation sheet")
                 continue
 
             # Read row if it exists
-            if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-
-                if type(row[2].value) == str:
-                    pages = [page.strip() for page in row[2].value.split(";")]
-                else:
-                    pages = []
-
-                location_title = row[3].value
-                location_description = row[4].value
-
+            if row[keys["Title"]].value != None:
                 # Create organisation object and add to organisation dictionary
-                organisation = VPOrganisation.VPOrganisation(Config.CATALOG_URL, title, description, location_title, location_description, pages)
+                self.row = row
+                self.keys = keys
+                organisation = VPOrganisation.VPOrganisation(
+                    parent_url=Config.CATALOG_URL,
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    location=self.getval("Location"),
+                    pages=self.getvals("LandingPage"),
+                    logo=self.getval("Logo"),
+                    identifier=self.getval("Identifier"))
                 organisations[organisation.TITLE] = organisation
+                if Config.DEBUG: print(vars(organisation))
 
         return organisations
 
@@ -56,9 +108,19 @@ class VPTemplateReader:
 
         :return: Dict of biobanks
         """
+        # Prepare reading
+        print("Reading biobank sheet...")
+        expected_column_names = ['License', 'Title', 'Description', 'Theme',
+                        'Publisher', 'ContactPoint', 'PersonalData',
+                        'PopulationCoverage', 'Language', 'AccessRights',
+                        'LandingPage', 'Distribution', 'VPConnection',
+                        'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                        'Issued', 'Modified', 'Version', 'ConformsTo', None]
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+        
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
-        ws = wb['BiobankPatientRegistry']
+        ws = wb['Biobank']
         
         # Loop over rows of excel sheet
         first_row = True
@@ -67,44 +129,42 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the biobank sheet")
                 continue
 
             # Read row if it exists
-            if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                populationcoverage = row[2].value
-
-                if type(row[3].value) == str:
-                    themes = [theme.strip() for theme in row[3].value.split(";")]
-                else:
-                    themes = []
-
-                conforms_to = row[4].value
-
-                publisher_name = row[5].value
-
-                if type(row[6].value) == str:
-                    pages = [page.strip() for page in row[6].value.split(";")]
-                else:
-                    pages = []
-
-                resource_type = row[7].value
-
-                if type(row[8].value) == str:
-                    keywords = [item.strip() for item in row[8].value.split(";")]
-                else:
-                    keywords = []
-
-                language = row[9].value
-                access = row[10].value
-                access_type = row[11].value
-
+            if row[keys["Title"]].value != None:
                 # Create biobank object and add to biobank dictionary if it is a biobank
-                if resource_type == "Biobank":
-                    biobank = VPBiobank.VPBiobank(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher_name, pages)
-                    biobanks[biobank.TITLE] = biobank
+                self.row = row
+                self.keys = keys
+                biobank = VPBiobank.VPBiobank(
+                    parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    distribution=self.getval("Distribution"),
+                    populationcoverage=self.getval("PopulationCoverage"))
+
+                biobanks[biobank.TITLE] = biobank
+                if Config.DEBUG: print(vars(biobank))
 
         return biobanks
 
@@ -116,9 +176,19 @@ class VPTemplateReader:
 
         :return: Dict of patientregistries
         """
+        # Prepare reading
+        print("Reading patient registry sheet...")
+        expected_column_names = ['License', 'Title', 'Description',
+                'Theme', 'Publisher', 'ContactPoint', 'PersonalData',
+                'PopulationCoverage', 'Language', 'AccessRights',
+            	'LandingPage', 'Distribution', 'VPConnection',
+                'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                'Issued', 'Modified', 'Version', 'ConformsTo', None]
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
-        ws = wb['BiobankPatientRegistry']
+        ws = wb['PatientRegistry']
         
         # Loop over rows of excel sheet
         first_row = True
@@ -127,44 +197,41 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the patient registry sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                populationcoverage = row[2].value
-
-                if type(row[3].value) == str:
-                    themes = [theme.strip() for theme in row[3].value.split(";")]
-                else:
-                    themes = []
-
-                conforms_to = row[4].value
-
-                publisher_name = row[5].value
-
-                if type(row[6].value) == str:
-                    pages = [page.strip() for page in row[6].value.split(";")]
-                else:
-                    pages = []
-
-                resource_type = row[7].value
-
-                if type(row[8].value) == str:
-                    keywords = [item.strip() for item in row[8].value.split(";")]
-                else:
-                    keywords = []
-
-                language = row[9].value
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create patient registry object and add to patientregistry dictionary if it is a patientregistry
-                if resource_type == "Patient registry":
-                    patientregistry = VPPatientregistry.VPPatientregistry(Config.CATALOG_URL, None, title, description, populationcoverage, themes, publisher_name, pages)
-                    patientregistries[patientregistry.TITLE] = patientregistry
+                self.row = row
+                self.keys = keys
+                patientregistry = VPPatientregistry.VPPatientRegistry(
+                    parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    distribution=self.getval("Distribution"),
+                    populationcoverage=self.getval("PopulationCoverage"))
+                patientregistries[patientregistry.TITLE] = patientregistry
+                if Config.DEBUG: print(vars(patientregistry))
 
         return patientregistries
 
@@ -176,6 +243,15 @@ class VPTemplateReader:
 
         :return: Dict of datasets
         """
+        print("Reading dataset sheet...")
+        expected_column_names = ['License', 'Title', 'Description', 'Theme',
+                        'Publisher', 'ContactPoint', 'PersonalData',
+                        'PopulationCoverage', 'Language', 'AccessRights',
+                        'LandingPage', 'Distribution', 'VPConnection',
+                        'ODRL Policy', 'Keyword', 'Logo', 'Identifier',
+                        'Issued', 'Modified', 'Version', 'ConformsTo', None]
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Dataset']
@@ -187,49 +263,40 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the dataset sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-
-                if type(row[2].value) == str:
-                    themes = [theme.strip() for theme in row[2].value.split(";")]
-                else:
-                    themes = []
-
-                vpconnection = row[3].value
-                license = row[4].value
-                
-                if type(row[5].value) == str:
-                    related = [item.strip() for item in row[5].value.split(";")]
-                else:
-                    related = []
-
-                version = row[6].value
-                if version == None:
-                    version = "1"
-
-                if type(row[7].value) == str:
-                    keywords = [item.strip() for item in row[7].value.split(";")]
-                else:
-                    keywords = []
-
-                publisher_name = row[8].value
-                page = row[9].value
-
-                language = row[10].value
-                conforms_to = row[11].value
-                access = row[12].value
-                access_type = row[13].value
-
                 # Create dataset object and add to dataset dictionary
-                dataset = VPDataset.VPDataset(Config.CATALOG_URL, title, description, keywords, themes, 
-                                              None, publisher_name, "en", license, page, None, 
-                                              vpconnection, related, version, access, access_type)
+                self.row = row
+                self.keys = keys
+                dataset = VPDataset.VPDataset(
+                    parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRL Policy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getvals("AccessRights"),
+                    landingpage=self.getvals("LandingPage"),
+                    distribution=self.getval("Distribution"))
                 datasets[dataset.TITLE] = dataset
+                if Config.DEBUG: print(vars(dataset))
 
         return datasets
 
@@ -241,6 +308,12 @@ class VPTemplateReader:
 
         :return: Dict of distributions
         """
+        print("Reading distribution sheet...")
+        expected_column_names = ['License', 'Title', 'Description',
+            'Publisher', 'Version', 'AccessRights', 'ODRLPolicy',
+            'MediaType', 'IsPartOf', 'Type', 'AccessService']
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['Distribution']
@@ -252,32 +325,34 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the distribution sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                dataset_title = row[1].value
-                description = row[2].value
-                url = row[3].value
-                url_type = row[4].value
-                license = row[5].value
-                version = row[6].value
-                mediatype = row[7].value
-                publisher_name = row[8].value
-                if type(row[9].value) == str:
-                    ispartof = [item.strip() for item in row[9].value.split(";")]
-                else:
-                    ispartof = []
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create distribution object and add to distribution dictionary
-                distribution = VPDistribution.VPDistribution(None, title, dataset_title, description,
-                                                             None, publisher_name, license, version, url, url_type,
-                                                             mediatype, ispartof, access, access_type)
+                self.row = row
+                self.keys = keys
+                distribution = VPDistribution.VPDistribution(
+                    parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    publisher=self.getval("Publisher"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    haspolicy=self.getval("ODRLPolicy"),
+                    mediatype=self.getval("MediaType"),
+                    ispartof=self.getvals("IsPartOf"),
+                    accessurl=None,
+                    downloadurl=None,
+                    accessservice=self.getval("AccessService"),
+                    conformsto=None
+                )
                 distributions[distribution.TITLE] = distribution
+                if Config.DEBUG: print(vars(distribution))
 
         return distributions
     
@@ -289,6 +364,17 @@ class VPTemplateReader:
 
         :return: Dict of dataservices
         """
+        print("Reading dataservice sheet...")
+        expected_column_names = ['License', 'Type', 'Title',
+            'Description', 'PersonalData', 'Publisher', 'Theme',
+            'Language', 'ContactPoint', 'PopulationCoverage',
+            'AccessRights', 'ConformsTo', 'EndpointDescription',
+            'EndpointURL', 'LandingPage', 'VPConnection',
+            'ODRLPolicy', 'Logo', 'ServesDataset', 'Keyword',
+            'Identifier', 'Issued', 'Modified', 'Version', 
+            'ConformsTo', None]
+        keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
+
         # Open organisation excel sheet
         wb = openpyxl.load_workbook(Config.EJP_VP_INPUT_FILE)
         ws = wb['DataService']
@@ -300,34 +386,43 @@ class VPTemplateReader:
             # Skip header
             if first_row:
                 first_row=False
+                column_names = [cell.value for cell in row]
+                if column_names != expected_column_names:
+                    raise SystemError("Column names do not match in the dataservice sheet")
                 continue
 
             # Read row if it exists
             if row[0].value != None:
-                # Retrieve field values from excel files
-                title = row[0].value
-                description = row[1].value
-                endpoint_description = row[2].value
-                license = row[3].value
-                endpoint_url = row[4].value
-                if type(row[5].value) == str:
-                    dataset_names = [item.strip() for item in row[5].value.split(";")]
-                else:
-                    dataset_names = []
-                version = row[6].value
-                if type(row[7].value) == str:
-                    keywords = [item.strip() for item in row[7].value.split(";")]
-                else:
-                    keywords = []
-                publisher_name = row[8].value
-                conforms_to = row[9].value
-                access = row[10].value
-                access_type = row[11].value
-
                 # Create dataservice object and add to dataservice dictionary
-                dataservice = VPDataService.VPDataService(Config.CATALOG_URL, title, description, None, publisher_name, license,
-                                                          version, endpoint_url, dataset_names, [],
-                                                          conforms_to, access, access_type)
+                self.row = row
+                self.keys = keys
+                dataservice = VPDataService.VPDataService(
+                    parent_url=Config.CATALOG_URL,
+                    license=self.getval("License"),
+                    title=self.getval("Title"),
+                    description=self.getval("Description"),
+                    theme=self.getvals("Theme"),
+                    publisher=self.getval("Publisher"),
+                    contactpoint=self.getval("ContactPoint"),
+                    language=self.getval("Language"),
+                    personaldata=self.getval("PersonalData"),
+                    conformsto=self.getval("ConformsTo"),
+                    vpconnection=self.getval("VPConnection"),
+                    keyword=self.getvals("Keyword"),
+                    logo=self.getval("Logo"),
+                    haspolicy=self.getval("ODRLPolicy"),
+                    identifier=self.getval("Identifier"),
+                    issued=self.getval("Issued"),
+                    modified=self.getval("Modified"),
+                    version=self.getval("Version"),
+                    accessrights=self.getval("AccessRights"),
+                    landingpage=self.getval("LandingPage"),
+                    otype=self.getval("Type"),
+                    servesdataset=self.getvals("ServesDataset"),
+                    endpointurl=self.getval("EndpointURL"),
+                    endpointdescription=self.getvals("EndpointDescription")
+                    )
                 dataservices[dataservice.TITLE] = dataservice
+                if Config.DEBUG: print(vars(dataservice))
 
         return dataservices

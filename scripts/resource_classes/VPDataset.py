@@ -1,4 +1,5 @@
 import Utils
+import Config
 import chevron
 from rdflib import Graph
 from resource_classes import VPResource
@@ -7,47 +8,51 @@ class VPDataset(VPResource.VPResource):
     """
     This class extends Resource class with properties specific to dataset properties
     """
-    LANGUAGE_URL = None
-    KEYWORDS = []
-    THEMES = []
-    LANDING_PAGE = None
-    CONTACT_POINT = None
-    KEYWORDS = []
-    THEMES = []
-    LANDING_PAGE = None
-    CONTACT_POINT = None
+
+    URL = None
+    DISTRIBUTION = None
 
 
-    def __init__(self, parent_url, title, description, keywords, themes, publisher_url, publisher_name,
-                 language, license, page, contact_point, vpconnection, related, version, access, access_type):
+    def __init__(self, *, parent_url, license, title, description,
+                 theme, publisher, contactpoint, language, personaldata, 
+                 conformsto, vpconnection, keyword, logo, haspolicy, 
+                 identifier, issued, modified, version, accessrights,
+                 landingpage, distribution):
         """
+        :param parent_url: Parent's FDP URL of a dataset
 
-        :param parent_url: Parent's catalog URL of a dataset. NOTE this url should exist in an FDP
-        :param title: Title of a dataset
-        :param description: Description of a dataset
-        :param keywords: Keywords to describe a dataset
-        :param themes: Themes URLs to describe a dataset
-        :param publisher_url: Publisher URL of a resource (e.g. https://orcid.org/0000-0002-1215-167X)
-        :param publisher_name: Publisher name of a resource
-        :param language: Language URL of a dataset (e.g. http://id.loc.gov/vocabulary/iso639-1/en)
-        :param license: License URL of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0)
-        :param page: Landing page URL of a dataset
-        :param contact_point: Contact point URL or mailto URL of a dataset
-        :param vpconnection
-        :param related
-        :param version
+        :param license: Licence of a dataset (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0) (mandatory)
+        :param title: Title of a dataset (mandatory)
+        :param description: Description of a dataset (mandatory)
+        :param theme: Themes of a dataset (mandatory)
+        :param publisher: Publisher of a dataset (mandatory)
+        :param contactpoint: Contactpoint of a dataset (mandatory)
+        :param langauge: Language of a dataset (e.g. http://id.loc.gov/vocabulary/iso639-1/en) (mandatory)
+        :param personaldata: Whether a dataset is personal data (mandatory)
+
+        :param conformsto: Specification the dataset conforms to (optional)
+        :param vpconnection: Connection of a dataset to the Virtual platform (optional)
+        :param keyword: Keyword of a dataset (optional)
+        :param logo: Logo of a dataset (optional)
+        :param haspolicy: ODRL policy belonging to a dataset (optional)
+        :param identifier: Identifier of a dataset (optional)
+        :param issued: The date a dataset was issued (optional)
+        :param modified: The date a dataset was last modified (optional)
+        :param version: The version of a dataset (optional)
+
+        :param accessrights: The accessrights of a dataset (recommended)
+        :param landingpage: The landingpage of a dataset (recommended)
+
+        :param distribution: The distribution of a dataset (optional)
         """
         # Pass core properties to parent class
-        super().__init__(parent_url, title, description, publisher_url, publisher_name, license, version, access, access_type)
+        super().__init__(parent_url, license, title, description, 
+                 theme, publisher, contactpoint, language, personaldata, 
+                 conformsto, vpconnection, keyword, logo, haspolicy, 
+                 identifier, issued, modified, version, accessrights,
+                 landingpage)
 
-        self.KEYWORDS = keywords
-        self.THEMES = themes
-        self.LANGUAGE_URL = language
-        self.LANDING_PAGE = page
-        self.CONTACT_POINT = contact_point
-        # TODO: Implement vpconnection and related after schema update
-        self.VPCONNECTION = vpconnection
-        self.RELATED = related
+        self.DISTRIBUTION = distribution
     
     def get_graph(self):
         """
@@ -58,15 +63,11 @@ class VPDataset(VPResource.VPResource):
         utils = Utils.Utils()
         graph = super().get_graph()
 
-        self.THEMES.append(self.VPCONNECTION)
-
-        theme_str = utils.list_to_rdf_URIs(self.THEMES)
-        page_str = utils.list_to_rdf_URIs(self.LANDING_PAGE)
-        keyword_str = utils.list_to_rdf_literals(self.KEYWORDS)
-
         with open('../templates/vpdataset.mustache', 'r') as f:
-            body = chevron.render(f, {'theme': theme_str, 'page': page_str, 'keyword': keyword_str,
-                                    'language': self.LANGUAGE_URL, 'contact_url': self.CONTACT_POINT})
+            body = chevron.render(f, {'distribution': self.DISTRIBUTION})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return graph

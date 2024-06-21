@@ -8,17 +8,18 @@ loc:new  a  foaf:Organisation;
   dct:isPartOf <{{&parent_url}}>;
   dct:title "{{title}}" ;
   foaf:name "{{title}}" ;
-  dct:spatial :location ;
+  dct:description "{{description}}" ;
   foaf:page {{&pages}} .
-  
-:location a dct:Location ;
-  dct:title "{{location_title}}" .
 
 {{! Optional triples }}
-{{#description}}
-loc:new dct:description "{{description}}" .
-{{/description}}
+{{#logo}}
+loc:new foaf:logo <{{&logo}}> .
+{{/logo}}
 
-{{#location_description}}
-:location dct:description "{{location_description}}" .
-{{/location_description}}
+{{#location}}
+loc:new dct:location "{{location}}" .
+{{/location}}
+
+{{#identifier}}
+loc:new dct:identifier "{{identifier}}" .
+{{/identifier}}

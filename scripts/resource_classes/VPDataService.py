@@ -1,4 +1,5 @@
 import Utils
+import Config
 import chevron
 from rdflib import Graph
 from resource_classes import VPResource
@@ -7,35 +8,61 @@ class VPDataService(VPResource.VPResource):
     """
     This class extends Resource class with properties specific to dataset properties
     """
-    ENDPOINT_URL = None
-    DATASET_NAMES = []
-    DATASET_URLS = []
-    CONFORMS_TO = None
+    OTYPE = None
+    SERVERSDATASET = []
+    ENDPOINTURL = []
+    ENDPOINTDESCRIPTION = []
 
 
-    def __init__(self, parent_url, title, description, publisher_url, publisher_name, license, version, endpoint_url, serves_dataset_names, serves_dataset_urls, conforms_to, access, access_type):
+    def __init__(self, *, parent_url, license, title, description,
+                 theme, publisher, contactpoint, language, personaldata, 
+                 conformsto, vpconnection, keyword, logo, haspolicy, 
+                 identifier, issued, modified, version, accessrights,
+                 landingpage, otype, servesdataset, endpointurl, 
+                 endpointdescription):
         """
 
-        :param parent_url: Parent's FDP URL of a resource
-        :param title: Title of a resource
-        :param description: Description of a resource
-        :param publisher_url: Publisher URL of a resource (e.g. https://orcid.org/0000-0002-1215-167X)
-        :param publisher_name: Publisher name of a resource
-        :param language: Language URL of a resource (e.g. http://id.loc.gov/vocabulary/iso639-1/en)
-        :param license: License URL of a resource (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0)
-        :param endpoint_url: Url of the endpoint
-        :param serves_dataset_names: Names of the datasets the dataservice serves
-        :param serves_dataset_urls: URLs of the datasets the dataservice serves
-        :param conforms to: specification the dataservice conforms to TODO: double check
+        :param parent_url: Parent's FDP URL of a dataset
+
+        :param license: Licence of a dataset (e.g. http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0) (mandatory)
+        :param title: Title of a dataset (mandatory)
+        :param description: Description of a dataset (mandatory)
+        :param theme: Themes of a dataset (mandatory)
+        :param publisher: Publisher of a dataset (mandatory)
+        :param contactpoint: Contactpoint of a dataset (mandatory)
+        :param langauge: Language of a dataset (e.g. http://id.loc.gov/vocabulary/iso639-1/en) (mandatory)
+        :param personaldata: Whether a dataset is personal data (mandatory)
+
+        :param conformsto: Specification the dataset conforms to (optional)
+        :param vpconnection: Connection of a dataset to the Virtual platform (optional)
+        :param keyword: Keyword of a dataset (optional)
+        :param logo: Logo of a dataset (optional)
+        :param haspolicy: ODRL policy belonging to a dataset (optional)
+        :param identifier: Identifier of a dataset (optional)
+        :param issued: The date a dataset was issued (optional)
+        :param modified: The date a dataset was last modified (optional)
+        :param version: The version of a dataset (optional)
+
+        :param accessrights: The accessrights of a dataset (recommended)
+        :param landingpage: The landingpage of a dataset (recommended)
+
+        :param otype: Type of the dataservice (edam operation) (mandatory)
+        :param servesdataset: The datasets the dataservice serves (optional)
+        :param endpointurl: Url of the endpoint (recommended)
+        :param endpointdescription: Description of the endpoint (recommended)
         """
         # Pass core properties to parent class
-        super().__init__(parent_url, title, description, publisher_url, publisher_name, license, version, access, access_type)
+        super().__init__(parent_url, license, title, description, 
+                 theme, publisher, contactpoint, language, personaldata, 
+                 conformsto, vpconnection, keyword, logo, haspolicy, 
+                 identifier, issued, modified, version, accessrights,
+                 landingpage)
+        
+        self.OTYPE = otype
+        self.SERVERSDATASET = servesdataset
+        self.ENDPOINTURL = endpointurl
+        self.ENDPOINTDESCRIPTION = endpointdescription
 
-        self.ENDPOINT_URL = endpoint_url
-        self.DATASET_NAMES = serves_dataset_names
-        self.DATASET_URLS = serves_dataset_urls
-        self.CONFORMS_TO = conforms_to
-    
     def get_graph(self):
         """
         Method to get dataservice RDF
@@ -45,11 +72,16 @@ class VPDataService(VPResource.VPResource):
         utils = Utils.Utils()
         graph = super().get_graph()
 
-        serves_datasets_str = utils.list_to_rdf_URIs(self.DATASET_URLS)
+        servesdataset_str = utils.list_to_rdf_URIs(self.SERVERSDATASET)
+        endpointdescription_str = utils.list_to_rdf_URIs(self.ENDPOINTDESCRIPTION)
 
         with open('../templates/vpdataservice.mustache', 'r') as f:
-            body = chevron.render(f, {'endpoint_url': self.ENDPOINT_URL, 'dataset_urls': serves_datasets_str,
-                                      'conforms_to': self.CONFORMS_TO})
+            body = chevron.render(f, {'type': self.OTYPE, 'serversdataset_str': servesdataset_str,
+                                      'endpointurl': self.ENDPOINTURL,
+                                      'endpointdescription_str': endpointdescription_str})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return graph

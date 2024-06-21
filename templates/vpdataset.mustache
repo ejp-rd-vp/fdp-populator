@@ -3,20 +3,8 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix loc: <http://localhost/>.
 
-loc:new a dcat:Dataset.
+loc:new a dcat:Dataset .
 
-{{#keyword}}
-loc:new dcat:keyword {{&keyword}}.
-{{/keyword}}
-{{#theme}}
-loc:new dcat:theme {{&theme}}.
-{{/theme}}
-{{#pages}}
-loc:new foaf:page {{&pages}} .
-{{/pages}}
-{{#language_url}}
-loc:new dct:language <{{&language_url}}>.
-{{/language_url}}
-{{#contact_url}}
-loc:new dcat:contactPoint <{{&contact_url}}>.
-{{/contact_url}}
+{{#distribution}}
+loc:new dcat:distribution <{{&distribution}}> .
+{{/distribution}}

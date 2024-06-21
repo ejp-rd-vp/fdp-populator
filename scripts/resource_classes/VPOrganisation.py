@@ -1,3 +1,4 @@
+import Config
 import chevron
 from rdflib import Graph
 
@@ -9,27 +10,30 @@ class VPOrganisation():
     PARENT_URL = None
     TITLE = None
     DESCRIPTION = None
-    LOCATION_TITLE = None
-    LOCATION_DESCRIPTION = None
     LANDING_PAGES = None
+    LOGO = None
+    LOCATION = None
+    IDENTIFIER = None
 
 
-    def __init__(self, parent_url, title, description, location_title, location_description, pages):
+    def __init__(self,* , parent_url, title, description, pages, logo, location, identifier):
         """
 
-        :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP
-        :param title: Title of an organisation
-        :param description: Description of an organisation
-        :param location_title: title of a location of an organisation
-        :param location_title: description of a location of an organisation
-        :param pages: Landing page URLs of an organisation
+        :param parent_url: Parent's catalog URL of an organisation. NOTE this url should exist in an FDP (mandatory)
+        :param title: Title of an organisation (mandatory)
+        :param description: Description of an organisation (mandatory)
+        :param pages: Landing page URLs of an organisation (mandatory)
+        :param logo: Logo of an organisation (optional)
+        :param location_title: title of a location of an organisation (optional)
+        :param identifier: identifier of an organisation (optional)
         """
         self.PARENT_URL = parent_url
         self.TITLE = title
         self.DESCRIPTION = description
-        self.LOCATION_TITLE = location_title
-        self.LOCATION_DESCRIPTION = location_description
         self.LANDING_PAGES = pages
+        self.LOGO = logo
+        self.LOCATION = location
+        self.IDENTIFIER = identifier
     
     def get_graph(self):
         """
@@ -50,9 +54,13 @@ class VPOrganisation():
             body = chevron.render(f, {'parent_url': self.PARENT_URL,
                                       'title': self.TITLE,
                                       'description': self.DESCRIPTION,
-                                      'location_title': self.LOCATION_TITLE,
-                                      'location_description': self.LOCATION_DESCRIPTION,
-                                      'pages': page_str})
+                                      'pages': page_str,
+                                      'logo': self.LOGO,
+                                      'location': self.LOCATION,
+                                      'identifier': self.IDENTIFIER})
+            if Config.DEBUG:
+                print("RDF created with Mustache template:")
+                print(body)
             graph.parse(data=body, format="turtle")
 
         return graph
