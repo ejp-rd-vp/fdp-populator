@@ -1,6 +1,7 @@
 import FDPClient
 import Config
 import Utils
+from warnings import warn
 from template_readers import FDPTemplateReader, VPTemplateReader
 import uuid
 
@@ -67,8 +68,7 @@ class Populator:
             # # Create organisation entries first
             # for organisation_name, organisation in organisations.items():
             #     organisation.URL = self.create_resource(organisation, "organisation")
-            print("WARNING: organisation metadata is dropped due to metadata schema discrepancy")
-
+            warn("Organisation metadata is dropped due to metadata schema discrepancy", Warning)
 
             # Create biobank entries
             for biobank_name, biobank in biobanks.items():

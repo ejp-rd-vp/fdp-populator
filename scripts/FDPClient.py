@@ -1,3 +1,4 @@
+import Config
 import requests
 import json
 
@@ -26,9 +27,18 @@ class FDPClient:
         headers = {
             'Content-Type': "application/json"
         }
+        
+        if Config.DEBUG:
+            print("Sending authentication request:")
+            print("URL:", url)
+            print("headers:", headers)
+            print("payload:", payload)
 
         response = requests.request("POST", url, data=payload, headers=headers)
         data = json.loads(response.text)
+        if Config.DEBUG:
+            print("server response:", response)
+            print("response data:", response.text)
         try:
             return data["token"]
         except:
@@ -47,8 +57,19 @@ class FDPClient:
         if not isinstance(data, str):
             data = data.decode("utf-8")
 
+        if Config.DEBUG:
+            print("Sending POST request:")
+            print("URL:", url)
+            print("authorization:", authorization)
+            print("headers:", headers)
+            print("payload:", data)
+
         response = requests.request("POST", url, data=data.encode('utf-8'), headers=headers)
-        print(response.headers)
+        
+        if Config.DEBUG:
+            print("server response:", response)
+            print("response data:", response.text)
+
         try:
             resource_url = response.headers["Location"]
         except:
