@@ -1,0 +1,15 @@
+[ a  foaf:Organisation;
+  dct:title "{{title}}" ;
+  foaf:name "{{title}}" ;
+  dct:description "{{description}}" ;
+{{! Optional triples }}
+{{#logo}}
+  foaf:logo <{{&logo}}> ;
+{{/logo}}
+{{#location}}
+  dct:location "{{location}}" ;
+{{/location}}
+{{#identifier}}
+  dct:identifier "{{identifier}}" ;
+{{/identifier}}
+  foaf:page {{&pages}} ]

@@ -14,12 +14,7 @@ loc:new
     dct:title "{{title}}" ;
     dct:description "{{description}}" ;
     dcat:theme {{&theme_str}} ;
-    dct:publisher [ a foaf:Agent; 
-        foaf:name "EJP RD";
-        foaf:logo <https://www.ejprarediseases.org/wp-content/uploads/2020/11/cropped-EJP-RD-txt-horizontal.png>
-    ] ;
-    dcat:contactPoint [ a vcard:Agent ;
-        vcard:url <{{&contactpoint}}> ] ;
+    dct:publisher {{&publisher}} ;
     dct:language <{{&language}}> ;
     ejp:personalData "{{personaldata}}" ;
     dct:hasVersion "{{version}}" ;

@@ -1,6 +1,7 @@
 import Utils
 import Config
 import chevron
+from warnings import warn
 from rdflib import Graph
 
 class VPDistribution():
@@ -28,7 +29,7 @@ class VPDistribution():
     def __init__(self,* , parent_url, license, title, description, 
                  publisher, version, accessrights, haspolicy, 
                  mediatype, ispartof, accessurl, downloadurl,
-                 accessservice, conformsto):
+                 accessservice, conformsto, dataset_title):
         """
         :param parent_url: Parent's FDP URL of a distribution (mandatory)
 
@@ -46,6 +47,7 @@ class VPDistribution():
         :param downloadurl: download url of a distribution (optional)
         :param accessservice: access service of a distribution (optional)
         :param conformsto: conforms to of distribution (recommended)
+        :param dataset_title: name of the distributed dataset (mandatory but missing from template)
         """
         self.PARENT_URL = parent_url
         self.LICENSE = license
@@ -61,6 +63,7 @@ class VPDistribution():
         self.DOWNLOADURL = downloadurl
         self.ACCESSSERVICE = accessservice
         self.CONFORMSTO = conformsto
+        self.DATASET_TITLE = dataset_title
 
     
     def get_graph(self):
@@ -72,13 +75,16 @@ class VPDistribution():
         utils = Utils.Utils()
         graph = Graph()
 
+        self.ISPARTOF.append(self.PARENT_URL)
         ispartof_str = utils.list_to_rdf_URIs(self.ISPARTOF)
+        haspolicy_str = utils.list_to_rdf_URIs([self.HASPOLICY[0]])
+        warn("Only first ODRL policy is used due to metadata schema discrepancy", Warning)
 
         with open('../templates/vpdistribution.mustache', 'r') as f:
             body = chevron.render(f, {'license': self.LICENSE, 'title': self.TITLE,
                                       'description': self.DESCRIPTION, 'publisher': self.PUBLISHER,
                                       'version': self.VERSION, 'accessrights': self.ACCESSRIGHTS,
-                                      'haspolicy': self.HASPOLICY, 'mediatype': self.MEDIATYPE,
+                                      'haspolicy_str': self.HASPOLICY, 'mediatype': self.MEDIATYPE,
                                       'ispartof': ispartof_str, 'accessurl': self.ACCESSURL,
                                       'downloadurl': self.DOWNLOADURL, 'accessservice': self.ACCESSSERVICE,
                                       'conformsto': self.CONFORMSTO})

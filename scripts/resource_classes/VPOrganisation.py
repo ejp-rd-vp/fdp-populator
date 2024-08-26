@@ -35,7 +35,7 @@ class VPOrganisation():
         self.LOCATION = location
         self.IDENTIFIER = identifier
     
-    def get_graph(self):
+    def get_blank_node(self):
         """
         Method to get organisation RDF
 
@@ -50,7 +50,7 @@ class VPOrganisation():
         # Render RDF
         graph = Graph()
 
-        with open('../templates/vporganisation.mustache', 'r') as f:
+        with open('../templates/vporganisationblank.mustache', 'r') as f:
             body = chevron.render(f, {'parent_url': self.PARENT_URL,
                                       'title': self.TITLE,
                                       'description': self.DESCRIPTION,
@@ -61,6 +61,5 @@ class VPOrganisation():
             if Config.DEBUG:
                 print("RDF created with Mustache template:")
                 print(body)
-            graph.parse(data=body, format="turtle")
 
-        return graph
+        return body

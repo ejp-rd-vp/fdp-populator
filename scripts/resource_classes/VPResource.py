@@ -109,7 +109,7 @@ class VPResource:
         warn("VP connection is dropped because the SHACL implementation is out of date", Warning)
         warn("Only first ODRL policy is used due to metadata schema discrepancy", Warning)
         warn("Keyword is added if there are no keywords to conform to implementation", Warning)
-        warn("vcard might me incompatible with some FDP configurations", Warning)
+        warn("vcard is incompatible with some FDP configurations, including the WP13 configuration", Warning)
         if self.VERSION is None or len(str(self.VERSION)) == 0:
             self.VERSION = 1
 
