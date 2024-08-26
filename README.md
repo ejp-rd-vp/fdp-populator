@@ -26,6 +26,6 @@ Alternatively, [this](https://colab.research.google.com/drive/1YeARH-hBJbg5Nz2MM
 The EJP RD version of this tool requires special configuration of the FAIR Data Point, following the [EJP RD metadata schema](https://github.com/ejp-rd-vp/resource-metadata-schema).
 
 ### Status
-Datasets are currently succesfully uploaded to FDPs. Some limitations still exist due to metadata schema discrepancies.
+Datasets are currently succesfully uploaded to FDPs. Distributions are almost ready. Some limitations still exist in the tool due to metadata schema discrepancies.
 
 

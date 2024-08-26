@@ -1,15 +1,15 @@
-# Remote test FDP
-catalog_url: http://178.63.49.197:8051/catalog/d02af5a9-038f-44da-9447-0370fde9d9b4
+# Set catalog URL for resources to be uploaded to
+catalog_url: https://localhost/catalog/e73fa363-7ce9-4ee1-accf-78370164b529
 
-# Local test FDP
-# catalog_url: http://localhost/catalog/72d363a3-7995-4358-a95c-b56083d2243d
-
-# FDP template
+# Set location of FDP metadata CSV sheets if they are used 
 dataset_file: "test-input/datasets.csv"
 distribution: "test-input/distributions.csv"
 
-# EJPRD template
-# ejp_vp_file: vp_test_input/EJPRD_Resource_Metadata_template.xlsx
+# Set location of EJPRD metadata Excel sheet if it is used instead of the FDP metadata
+ejp_vp_file: "vp_test_input/dataset_test_complete.xlsx"
 
-# Dry run?
+# Set dry run to true to test FDPP before uploading metadata
 dry_run: false
+
+# Set debug to false to disable debug messages
+debug: true
