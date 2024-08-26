@@ -9,14 +9,15 @@ loc:new
     dct:license <{{&license}}> ;
     dct:title "{{title}}" ;
     dct:description "{{description}}" ;
-    dct:publisher <{{&publisher}}> ;
-    dcat:version "{{version}}" .
+    dct:publisher {{&publisher}} ;
+    dcat:version "{{version}}" ;
+    dct:hasVersion "{{version}}" .
 
 {{#accessrights}}
 loc:new dct:accessRights <{{&accessrights}}> .
 {{/accessrights}}
 {{#haspolicy}}
-loc:new odrl:hasPolicy <{{&haspolicy}}> .
+loc:new odrl:hasPolicy {{&haspolicy}} .
 {{/haspolicy}}
 {{#mediatype}}
 loc:new dcat:mediaType "{{mediatype}}" .

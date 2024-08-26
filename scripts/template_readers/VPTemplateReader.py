@@ -311,7 +311,7 @@ class VPTemplateReader:
         print("Reading distribution sheet...")
         expected_column_names = ['License', 'Title', 'Description',
             'Publisher', 'Version', 'AccessRights', 'ODRLPolicy',
-            'MediaType', 'IsPartOf', 'Type', 'AccessService']
+            'MediaType', 'IsPartOf', 'Type', 'AccessService', 'Dataset Title']
         keys = dict(zip(expected_column_names, range(0, len(expected_column_names))))
 
         # Open organisation excel sheet
@@ -336,7 +336,7 @@ class VPTemplateReader:
                 self.row = row
                 self.keys = keys
                 distribution = VPDistribution.VPDistribution(
-                    parent_url=Config.CATALOG_URL,
+                    parent_url=None,
                     license=self.getval("License"),
                     title=self.getval("Title"),
                     description=self.getval("Description"),
@@ -349,7 +349,8 @@ class VPTemplateReader:
                     accessurl=None,
                     downloadurl=None,
                     accessservice=self.getval("AccessService"),
-                    conformsto=None
+                    conformsto=None,
+                    dataset_title=self.getval("Dataset Title")
                 )
                 distributions[distribution.TITLE] = distribution
                 if Config.DEBUG: print(vars(distribution))

@@ -100,12 +100,12 @@ class Populator:
                 # Link organisation
                 for organisation_name, organisation in organisations.items():
                     if distribution.PUBLISHER == organisation.TITLE:
-                        distribution.PUBLISHER = organisation.URL # TODO: replace this with the whole blank node
+                        distribution.PUBLISHER = organisation.get_blank_node()
 
-                # # Link dataset
-                # for dataset_name, dataset in datasets.items():
-                #     if distribution.DATASET_TITLE == dataset.TITLE:
-                #         distribution.PARENT_URL = dataset.URL
+                # Link dataset
+                for dataset_name, dataset in datasets.items():
+                    if distribution.DATASET_TITLE == dataset.TITLE:
+                        distribution.PARENT_URL = dataset.URL
 
                 # Create entry
                 distribution.URL = self.create_resource(distribution, "distribution")
